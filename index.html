@@ -3,43 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Komprimierte Webseite</title>
+    <title>Website aufgrund von DDoS-Angriff offline</title>
     <style>
         body {
-            background-color: black;
-            color: green;
-            font-family: monospace;
+            background-color: #111;
+            color: #fff;
+            font-family: Arial, sans-serif;
             text-align: center;
             margin-top: 20%;
         }
         h1 {
-            font-size: 30px;
+            font-size: 48px;
+            color: red;
             text-transform: uppercase;
-            animation: flicker 2s infinite;
         }
         p {
-            font-size: 16px;
-            word-wrap: break-word;
-            white-space: pre-wrap;
-            letter-spacing: -1px;
-            line-height: 1.5;
+            font-size: 24px;
+            color: #ccc;
         }
-        @keyframes flicker {
-            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
-                opacity: 1;
-            }
-            20%, 24%, 55% {
-                opacity: 0;
-            }
+        .error-code {
+            font-size: 30px;
+            color: yellow;
+            font-weight: bold;
+        }
+        .message {
+            font-size: 20px;
+            color: #bbb;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
 
-    <h1>Website Komprimiert</h1>
-    <p>
-        000011001100110001100101001011010001011100101001001011101010001101001010011100000101011010010010111101000010011100011100010101101100111011110100000001010011100001010111110000010110101000110010011101101001001011010100101001111000100011110101100111101001011101010011011101111010101101000011011110100001001101010101011110001001100000011001011011101010001110110000000111011010011010101010011010011101011010001101110110100101100011011101010011001101011111010110010101110011110001011111001111000111000111101111111
-    </p>
+    <h1>503 Service Unavailable</h1>
+    <p class="error-code">Fehler 503: Serverüberlastung</p>
+    <p class="message">Die Website ist momentan aufgrund eines DDoS-Angriffs nicht erreichbar. Unser Team arbeitet daran, das Problem zu beheben.</p>
+    <p class="message">Bitte versuchen Sie es später erneut.</p>
 
 </body>
 </html>
