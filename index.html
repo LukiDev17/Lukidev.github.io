@@ -3,20 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DDoS-Angriff-Karte</title>
+    <title>DDoS Angriffe Weltweit</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; }
-        #map { width: 80%; height: 500px; margin: auto; }
-        h1 { color: #333; }
-        p { color: #666; }
+        #map { height: 500px; width: 100%; }
     </style>
 </head>
 <body>
-    <h1>Aktuelle DDoS-Angriffe weltweit</h1>
-    <p>Diese Karte zeigt in Echtzeit die aktuellen DDoS-Angriffe.</p>
-    <div id="map">
-        <!-- Hier würde die interaktive Karte eingefügt -->
-        <p>Die DDoS-Daten werden hier angezeigt...</p>
-    </div>
+    <h1>Live DDoS-Angriff-Karte</h1>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        // Karte initialisieren
+        var map = L.map('map').setView([20, 0], 2); // Weltansicht
+
+        // OpenStreetMap als Hintergrundlayer hinzufügen
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Beispiel für DDoS-Daten (Dummy-Daten, keine echten Angriffe)
+        var ddosData = [
+            { location: [34.0522, -118.2437], city: "Los Angeles", magnitude: 10 },
+            { location: [40.7128, -74.0060], city: "New York", magnitude: 8 },
+            { location: [51.5074, -0.1278], city: "London", magnitude: 7 }
+        ];
+
+        // Marker für jedes "DDoS-Ereignis" hinzufügen
+        ddosData.forEach(event => {
+            L.marker(event.location)
+                .addTo(map)
+                .bindPopup(`<b>DDoS-Angriff in ${event.city}</b><br>Stärke: ${event.magnitude}`);
+        });
+    </script>
 </body>
 </html>
