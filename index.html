@@ -3,42 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Website aufgrund von DDoS-Angriff offline</title>
+    <title>DDoS-Angriff-Karte</title>
     <style>
-        body {
-            background-color: #111;
-            color: #fff;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 20%;
-        }
-        h1 {
-            font-size: 48px;
-            color: red;
-            text-transform: uppercase;
-        }
-        p {
-            font-size: 24px;
-            color: #ccc;
-        }
-        .error-code {
-            font-size: 30px;
-            color: yellow;
-            font-weight: bold;
-        }
-        .message {
-            font-size: 20px;
-            color: #bbb;
-            margin-top: 20px;
-        }
+        body { font-family: Arial, sans-serif; text-align: center; }
+        #map { width: 80%; height: 500px; margin: auto; }
+        h1 { color: #333; }
+        p { color: #666; }
     </style>
 </head>
 <body>
-
-    <h1>503 Service Unavailable</h1>
-    <p class="error-code">Fehler 503: Serverüberlastung</p>
-    <p class="message">Die Website ist momentan aufgrund eines DDoS-Angriffs nicht erreichbar. Unser Team arbeitet daran, das Problem zu beheben.</p>
-    <p class="message">Bitte versuchen Sie es später erneut.</p>
-
+    <h1>Aktuelle DDoS-Angriffe weltweit</h1>
+    <p>Diese Karte zeigt in Echtzeit die aktuellen DDoS-Angriffe.</p>
+    <div id="map">
+        <!-- Hier würde die interaktive Karte eingefügt -->
+        <p>Die DDoS-Daten werden hier angezeigt...</p>
+    </div>
 </body>
 </html>
