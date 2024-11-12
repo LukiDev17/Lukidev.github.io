@@ -3,69 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DDoS Angriffe Weltweit</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <title>Fang das Quadrat</title>
     <style>
-        #map { height: 500px; width: 100%; margin-bottom: 20px; }
-        #ddos-list {
-            padding: 10px;
-            background-color: #f4f4f4;
-            border-top: 2px solid #ccc;
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        #game-container {
+            position: relative;
+            width: 600px;
+            height: 400px;
+            background-color: #fff;
+            border: 2px solid #333;
+        }
+        #square {
+            width: 50px;
+            height: 50px;
+            background-color: #3498db;
             position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            box-sizing: border-box;
+            cursor: pointer;
         }
-        #ddos-list h2 {
-            margin-top: 0;
-        }
-        .ddos-item {
-            margin: 5px 0;
+        #score {
+            margin-top: 20px;
+            font-size: 24px;
         }
     </style>
 </head>
 <body>
-    <h1>Live DDoS-Angriff-Karte</h1>
-    <div id="map"></div>
 
-    <div id="ddos-list">
-        <h2>Aktuelle DDoS-Angriffe</h2>
-        <div id="attack-locations"></div>
+    <div id="game-container">
+        <div id="square"></div>
     </div>
+    <div id="score">Punkte: 0</div>
 
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
-        // Karte initialisieren
-        var map = L.map('map').setView([20, 0], 2); // Weltansicht
+        let score = 0;
+        const square = document.getElementById("square");
+        const scoreDisplay = document.getElementById("score");
+        const gameContainer = document.getElementById("game-container");
 
-        // OpenStreetMap als Hintergrundlayer hinzufügen
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 18,
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
+        // Funktion, um das Quadrat an eine zufällige Position zu bewegen
+        function moveSquare() {
+            const containerWidth = gameContainer.clientWidth - square.clientWidth;
+            const containerHeight = gameContainer.clientHeight - square.clientHeight;
 
-        // Beispiel für DDoS-Daten (Dummy-Daten, keine echten Angriffe)
-        var ddosData = [
-            { location: [34.0522, -118.2437], city: "Los Angeles", magnitude: 10, url: "https://example.com/los-angeles" },
-            { location: [40.7128, -74.0060], city: "New York", magnitude: 8, url: "https://example.com/new-york" },
-            { location: [51.5074, -0.1278], city: "London", magnitude: 7, url: "https://example.com/london" }
-        ];
+            const randomX = Math.floor(Math.random() * containerWidth);
+            const randomY = Math.floor(Math.random() * containerHeight);
 
-        // Marker für jedes "DDoS-Ereignis" hinzufügen und in der Liste anzeigen
-        ddosData.forEach(event => {
-            // Marker zur Karte hinzufügen
-            L.marker(event.location)
-                .addTo(map)
-                .bindPopup(`<b>DDoS-Angriff in ${event.city}</b><br>Stärke: ${event.magnitude}`);
+            square.style.left = `${randomX}px`;
+            square.style.top = `${randomY}px`;
+        }
 
-            // Angriff zur Liste hinzufügen
-            var attackLocationsDiv = document.getElementById('attack-locations');
-            var attackItem = document.createElement('div');
-            attackItem.className = 'ddos-item';
-            attackItem.innerHTML = `<a href="${event.url}" target="_blank">${event.city}</a> - Stärke: ${event.magnitude}`;
-            attackLocationsDiv.appendChild(attackItem);
+        // Event-Listener für das Klicken auf das Quadrat
+        square.addEventListener("click", () => {
+            score++;
+            scoreDisplay.textContent = `Punkte: ${score}`;
+            moveSquare();
         });
+
+        // Das Quadrat initial bewegen
+        moveSquare();
     </script>
+
 </body>
 </html>
