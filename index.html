@@ -6,12 +6,33 @@
     <title>DDoS Angriffe Weltweit</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <style>
-        #map { height: 500px; width: 100%; }
+        #map { height: 500px; width: 100%; margin-bottom: 20px; }
+        #ddos-list {
+            padding: 10px;
+            background-color: #f4f4f4;
+            border-top: 2px solid #ccc;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        #ddos-list h2 {
+            margin-top: 0;
+        }
+        .ddos-item {
+            margin: 5px 0;
+        }
     </style>
 </head>
 <body>
     <h1>Live DDoS-Angriff-Karte</h1>
     <div id="map"></div>
+
+    <div id="ddos-list">
+        <h2>Aktuelle DDoS-Angriffe</h2>
+        <div id="attack-locations"></div>
+    </div>
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
@@ -26,16 +47,24 @@
 
         // Beispiel für DDoS-Daten (Dummy-Daten, keine echten Angriffe)
         var ddosData = [
-            { location: [34.0522, -118.2437], city: "Los Angeles", magnitude: 10 },
-            { location: [40.7128, -74.0060], city: "New York", magnitude: 8 },
-            { location: [51.5074, -0.1278], city: "London", magnitude: 7 }
+            { location: [34.0522, -118.2437], city: "Los Angeles", magnitude: 10, url: "https://example.com/los-angeles" },
+            { location: [40.7128, -74.0060], city: "New York", magnitude: 8, url: "https://example.com/new-york" },
+            { location: [51.5074, -0.1278], city: "London", magnitude: 7, url: "https://example.com/london" }
         ];
 
-        // Marker für jedes "DDoS-Ereignis" hinzufügen
+        // Marker für jedes "DDoS-Ereignis" hinzufügen und in der Liste anzeigen
         ddosData.forEach(event => {
+            // Marker zur Karte hinzufügen
             L.marker(event.location)
                 .addTo(map)
                 .bindPopup(`<b>DDoS-Angriff in ${event.city}</b><br>Stärke: ${event.magnitude}`);
+
+            // Angriff zur Liste hinzufügen
+            var attackLocationsDiv = document.getElementById('attack-locations');
+            var attackItem = document.createElement('div');
+            attackItem.className = 'ddos-item';
+            attackItem.innerHTML = `<a href="${event.url}" target="_blank">${event.city}</a> - Stärke: ${event.magnitude}`;
+            attackLocationsDiv.appendChild(attackItem);
         });
     </script>
 </body>
