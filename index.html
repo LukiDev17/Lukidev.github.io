@@ -3,71 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fang das Quadrat</title>
+    <title>Status Checker</title>
     <style>
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            background-color: #f3f4f6;
+            color: #333;
+            text-align: center;
         }
-        #game-container {
-            position: relative;
-            width: 600px;
-            height: 400px;
-            background-color: #fff;
-            border: 2px solid #333;
+        h1 {
+            color: #4a90e2;
         }
-        #square {
-            width: 50px;
-            height: 50px;
-            background-color: #3498db;
-            position: absolute;
-            cursor: pointer;
-        }
-        #score {
+        .status-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             margin-top: 20px;
-            font-size: 24px;
+        }
+        .service {
+            width: 300px;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #fff;
+        }
+        .service.online {
+            border-left: 6px solid #28a745;
+        }
+        .service.offline {
+            border-left: 6px solid #dc3545;
         }
     </style>
 </head>
 <body>
 
-    <div id="game-container">
-        <div id="square"></div>
+    <h1>Status Checker</h1>
+    <p>Sehen Sie, ob Ihre Lieblingsdienste aktuell in Betrieb sind</p>
+
+    <div class="status-container">
+        <div class="service" id="youtube">
+            <span>YouTube</span>
+            <span class="status">Laden...</span>
+        </div>
+        <div class="service" id="instagram">
+            <span>Instagram</span>
+            <span class="status">Laden...</span>
+        </div>
+        <div class="service" id="twitter">
+            <span>Twitter</span>
+            <span class="status">Laden...</span>
+        </div>
+        <!-- Weitere Dienste können hier hinzugefügt werden -->
     </div>
-    <div id="score">Punkte: 0</div>
 
     <script>
-        let score = 0;
-        const square = document.getElementById("square");
-        const scoreDisplay = document.getElementById("score");
-        const gameContainer = document.getElementById("game-container");
+        // Beispielhafte Funktion zur Simulation des Statusabfragens
+        function checkServiceStatus(serviceId, isOnline) {
+            const serviceElement = document.getElementById(serviceId);
+            const statusElement = serviceElement.querySelector('.status');
 
-        // Funktion, um das Quadrat an eine zufällige Position zu bewegen
-        function moveSquare() {
-            const containerWidth = gameContainer.clientWidth - square.clientWidth;
-            const containerHeight = gameContainer.clientHeight - square.clientHeight;
-
-            const randomX = Math.floor(Math.random() * containerWidth);
-            const randomY = Math.floor(Math.random() * containerHeight);
-
-            square.style.left = `${randomX}px`;
-            square.style.top = `${randomY}px`;
+            if (isOnline) {
+                serviceElement.classList.add('online');
+                serviceElement.classList.remove('offline');
+                statusElement.textContent = "In Betrieb";
+            } else {
+                serviceElement.classList.add('offline');
+                serviceElement.classList.remove('online');
+                statusElement.textContent = "Ausgefallen";
+            }
         }
 
-        // Event-Listener für das Klicken auf das Quadrat
-        square.addEventListener("click", () => {
-            score++;
-            scoreDisplay.textContent = `Punkte: ${score}`;
-            moveSquare();
-        });
+        // Simulierte Daten (Normalerweise wird hier eine API abgefragt)
+        const services = [
+            { id: "youtube", online: true },
+            { id: "instagram", online: false },
+            { id: "twitter", online: true }
+        ];
 
-        // Das Quadrat initial bewegen
-        moveSquare();
+        // Funktion zur Initialisierung des Status
+        function updateServiceStatuses() {
+            services.forEach(service => {
+                checkServiceStatus(service.id, service.online);
+            });
+        }
+
+        // Initialisierung
+        window.onload = updateServiceStatuses;
     </script>
 
 </body>
