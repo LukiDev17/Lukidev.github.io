@@ -1,99 +1,63 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Status Checker</title>
+    <title>Abonnenten-Belohnungen</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f3f4f6;
-            color: #333;
             text-align: center;
+            background-color: #f9f9f9;
+            padding: 20px;
         }
-        h1 {
-            color: #4a90e2;
-        }
-        .status-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 20px;
-        }
-        .service {
-            width: 300px;
-            padding: 15px;
-            margin: 10px;
-            border-radius: 8px;
+        .rewards-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #fff;
         }
-        .service.online {
-            border-left: 6px solid #28a745;
+        .reward {
+            font-size: 18px;
+            color: #333;
+            margin: 10px 0;
         }
-        .service.offline {
-            border-left: 6px solid #dc3545;
+        .highlight {
+            font-weight: bold;
+            color: #e63946;
         }
     </style>
 </head>
 <body>
-
-    <h1>Status Checker</h1>
-    <p>Sehen Sie, ob Ihre Lieblingsdienste aktuell in Betrieb sind</p>
-
-    <div class="status-container">
-        <div class="service" id="youtube">
-            <span>YouTube</span>
-            <span class="status">Laden...</span>
+    <div class="rewards-container">
+        <h1>Abonnenten-Belohnungen</h1>
+        <p>Aktuelle Abonnenten: <span id="subscriber-count" class="highlight">0</span></p>
+        <div id="reward-message" class="reward">
+            🎯 Noch keine Belohnungen freigeschaltet.
         </div>
-        <div class="service" id="instagram">
-            <span>Instagram</span>
-            <span class="status">Laden...</span>
-        </div>
-        <div class="service" id="twitter">
-            <span>Twitter</span>
-            <span class="status">Laden...</span>
-        </div>
-        <!-- Weitere Dienste können hier hinzugefügt werden -->
     </div>
 
     <script>
-        // Beispielhafte Funktion zur Simulation des Statusabfragens
-        function checkServiceStatus(serviceId, isOnline) {
-            const serviceElement = document.getElementById(serviceId);
-            const statusElement = serviceElement.querySelector('.status');
+        // Aktuelle Abonnentenzahl (dynamisch hier anpassen)
+        const currentSubscribers = 36; // Beispielwert
 
-            if (isOnline) {
-                serviceElement.classList.add('online');
-                serviceElement.classList.remove('offline');
-                statusElement.textContent = "In Betrieb";
-            } else {
-                serviceElement.classList.add('offline');
-                serviceElement.classList.remove('online');
-                statusElement.textContent = "Ausgefallen";
-            }
+        // Belohnungslogik
+        const subscriberCountEl = document.getElementById("subscriber-count");
+        const rewardMessageEl = document.getElementById("reward-message");
+
+        subscriberCountEl.textContent = currentSubscribers;
+
+        if (currentSubscribers >= 20 && currentSubscribers < 35) {
+            rewardMessageEl.textContent = "🎉 Belohnung: 1 Mega Box!";
+        } else if (currentSubscribers >= 35 && currentSubscribers < 50) {
+            rewardMessageEl.textContent = "🎉 Belohnung: 100 Gems und Gold!";
+        } else if (currentSubscribers >= 50) {
+            rewardMessageEl.textContent = "🎉 Belohnung: Eine Überraschung!";
         }
-
-        // Simulierte Daten (Normalerweise wird hier eine API abgefragt)
-        const services = [
-            { id: "youtube", online: true },
-            { id: "instagram", online: false },
-            { id: "twitter", online: true }
-        ];
-
-        // Funktion zur Initialisierung des Status
-        function updateServiceStatuses() {
-            services.forEach(service => {
-                checkServiceStatus(service.id, service.online);
-            });
-        }
-
-        // Initialisierung
-        window.onload = updateServiceStatuses;
     </script>
-
 </body>
 </html>
+
+    
