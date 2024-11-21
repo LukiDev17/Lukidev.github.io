@@ -28,26 +28,39 @@
             font-weight: bold;
             color: #e63946;
         }
-        .link {
-            margin-top: 20px;
-            font-size: 14px;
-            color: #0073e6;
-            text-decoration: none;
-        }
     </style>
 </head>
 <body>
     <div class="rewards-container">
         <h1>Abonnenten-Belohnungen</h1>
-        <!-- Manuell eingetragene Abonnentenzahl -->
-        <p>Aktuelle Abonnenten: <span id="subscriber-count" class="highlight">18</span></p>
+        <p>Aktuelle Abonnenten: <span id="subscriber-count" class="highlight">0</span></p>
         <div id="reward-message" class="reward">
-            🎉 Belohnung: 100 Gems und Gold!
+            🎯 Noch keine Belohnungen freigeschaltet.
         </div>
-        <a href="https://youtube.com/@lukidev39?si=SHIVZ5dwEd4xibl2" class="link" target="_blank">
-            Besuche meinen Kanal
-        </a>
     </div>
+
+    <script>
+        // Abonnentenzahl manuell setzen
+        const currentSubscribers = 18; // Hier kannst du die Abonnentenzahl anpassen
+
+        // Elemente im HTML auswählen
+        const subscriberCountEl = document.getElementById("subscriber-count");
+        const rewardMessageEl = document.getElementById("reward-message");
+
+        // Abonnentenzahl im HTML anzeigen
+        subscriberCountEl.textContent = currentSubscribers;
+
+        // Belohnungen basierend auf Abonnentenzahl festlegen
+        if (currentSubscribers >= 20 && currentSubscribers < 35) {
+            rewardMessageEl.textContent = "🎉 Belohnung: 1 Mega Box!";
+        } else if (currentSubscribers >= 35 && currentSubscribers < 50) {
+            rewardMessageEl.textContent = "🎉 Belohnung: 100 Gems und Gold!";
+        } else if (currentSubscribers >= 50) {
+            rewardMessageEl.textContent = "🎉 Belohnung: Eine Überraschung!";
+        } else {
+            rewardMessageEl.textContent = "🎯 Noch keine Belohnungen freigeschaltet.";
+        }
+    </script>
 </body>
 </html>
     
