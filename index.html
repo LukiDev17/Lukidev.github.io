@@ -39,55 +39,15 @@
 <body>
     <div class="rewards-container">
         <h1>Abonnenten-Belohnungen</h1>
-        <p>Aktuelle Abonnenten: <span id="subscriber-count" class="highlight">0</span></p>
+        <!-- Manuell eingetragene Abonnentenzahl -->
+        <p>Aktuelle Abonnenten: <span id="subscriber-count" class="highlight">36</span></p>
         <div id="reward-message" class="reward">
-            🎯 Noch keine Belohnungen freigeschaltet.
+            🎉 Belohnung: 100 Gems und Gold!
         </div>
         <a href="https://youtube.com/@lukidev39?si=SHIVZ5dwEd4xibl2" class="link" target="_blank">
             Besuche meinen Kanal
         </a>
     </div>
-
-    <script>
-        const API_KEY = "DEIN_API_KEY_HIER"; // Ersetze durch deinen YouTube API-Schlüssel
-        const CHANNEL_ID = "UCtFwvTCcFmb36aTLNKFTkPg"; // Deine Channel-ID
-
-        // Funktion zum Abrufen der Abonnentenzahl
-        async function fetchSubscribers() {
-            try {
-                const response = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${CHANNEL_ID}&key=${API_KEY}`);
-                const data = await response.json();
-                const subscriberCount = data.items[0].statistics.subscriberCount;
-
-                // Update der Abonnentenzahl und Belohnung
-                updateRewards(subscriberCount);
-            } catch (error) {
-                console.error("Fehler beim Abrufen der Abonnentenzahl:", error);
-                document.getElementById("reward-message").textContent = "❌ Fehler beim Abrufen der Daten.";
-            }
-        }
-
-        // Funktion zur Aktualisierung der Belohnungen
-        function updateRewards(currentSubscribers) {
-            const subscriberCountEl = document.getElementById("subscriber-count");
-            const rewardMessageEl = document.getElementById("reward-message");
-
-            subscriberCountEl.textContent = currentSubscribers;
-
-            if (currentSubscribers >= 20 && currentSubscribers < 35) {
-                rewardMessageEl.textContent = "🎉 Belohnung: 1 Mega Box!";
-            } else if (currentSubscribers >= 35 && currentSubscribers < 50) {
-                rewardMessageEl.textContent = "🎉 Belohnung: 100 Gems und Gold!";
-            } else if (currentSubscribers >= 50) {
-                rewardMessageEl.textContent = "🎉 Belohnung: Eine Überraschung!";
-            } else {
-                rewardMessageEl.textContent = "🎯 Noch keine Belohnungen freigeschaltet.";
-            }
-        }
-
-        // Abruf starten
-        fetchSubscribers();
-    </script>
 </body>
 </html>
     
