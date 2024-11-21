@@ -28,6 +28,12 @@
             font-weight: bold;
             color: #e63946;
         }
+        .link {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #0073e6;
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
@@ -37,27 +43,51 @@
         <div id="reward-message" class="reward">
             🎯 Noch keine Belohnungen freigeschaltet.
         </div>
+        <a href="https://youtube.com/@lukidev39?si=SHIVZ5dwEd4xibl2" class="link" target="_blank">
+            Besuche meinen Kanal
+        </a>
     </div>
 
     <script>
-        // Aktuelle Abonnentenzahl (dynamisch hier anpassen)
-        const currentSubscribers = 36; // Beispielwert
+        const API_KEY = "DEIN_API_KEY_HIER"; // Ersetze durch deinen YouTube API-Schlüssel
+        const CHANNEL_ID = "UCtFwvTCcFmb36aTLNKFTkPg"; // Deine Channel-ID
 
-        // Belohnungslogik
-        const subscriberCountEl = document.getElementById("subscriber-count");
-        const rewardMessageEl = document.getElementById("reward-message");
+        // Funktion zum Abrufen der Abonnentenzahl
+        async function fetchSubscribers() {
+            try {
+                const response = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${CHANNEL_ID}&key=${API_KEY}`);
+                const data = await response.json();
+                const subscriberCount = data.items[0].statistics.subscriberCount;
 
-        subscriberCountEl.textContent = currentSubscribers;
-
-        if (currentSubscribers >= 20 && currentSubscribers < 35) {
-            rewardMessageEl.textContent = "🎉 Belohnung: 1 Mega Box!";
-        } else if (currentSubscribers >= 35 && currentSubscribers < 50) {
-            rewardMessageEl.textContent = "🎉 Belohnung: 100 Gems und Gold!";
-        } else if (currentSubscribers >= 50) {
-            rewardMessageEl.textContent = "🎉 Belohnung: Eine Überraschung!";
+                // Update der Abonnentenzahl und Belohnung
+                updateRewards(subscriberCount);
+            } catch (error) {
+                console.error("Fehler beim Abrufen der Abonnentenzahl:", error);
+                document.getElementById("reward-message").textContent = "❌ Fehler beim Abrufen der Daten.";
+            }
         }
+
+        // Funktion zur Aktualisierung der Belohnungen
+        function updateRewards(currentSubscribers) {
+            const subscriberCountEl = document.getElementById("subscriber-count");
+            const rewardMessageEl = document.getElementById("reward-message");
+
+            subscriberCountEl.textContent = currentSubscribers;
+
+            if (currentSubscribers >= 20 && currentSubscribers < 35) {
+                rewardMessageEl.textContent = "🎉 Belohnung: 1 Mega Box!";
+            } else if (currentSubscribers >= 35 && currentSubscribers < 50) {
+                rewardMessageEl.textContent = "🎉 Belohnung: 100 Gems und Gold!";
+            } else if (currentSubscribers >= 50) {
+                rewardMessageEl.textContent = "🎉 Belohnung: Eine Überraschung!";
+            } else {
+                rewardMessageEl.textContent = "🎯 Noch keine Belohnungen freigeschaltet.";
+            }
+        }
+
+        // Abruf starten
+        fetchSubscribers();
     </script>
 </body>
 </html>
-
     
