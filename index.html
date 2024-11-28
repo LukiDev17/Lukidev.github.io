@@ -1,66 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Abonnenten-Belohnungen</title>
+    <title>Serverstatus</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             text-align: center;
-            background-color: #f9f9f9;
-            padding: 20px;
         }
-        .rewards-container {
+        .container {
             max-width: 600px;
-            margin: 0 auto;
             padding: 20px;
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #34495e;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
-        .reward {
-            font-size: 18px;
-            color: #333;
+        .warning-icon {
+            font-size: 80px;
+            color: #e74c3c;
+        }
+        h1 {
+            font-size: 24px;
             margin: 10px 0;
         }
-        .highlight {
-            font-weight: bold;
-            color: #e63946;
+        p {
+            font-size: 18px;
         }
     </style>
 </head>
 <body>
-    <div class="rewards-container">
-        <h1>Abonnenten-Belohnungen</h1>
-        <p>Aktuelle Abonnenten: <span id="subscriber-count" class="highlight">0</span></p>
-        <div id="reward-message" class="reward">
-            🎯 Noch keine Belohnungen freigeschaltet.
-        </div>
+    <div class="container">
+        <div class="warning-icon">⚠️</div>
+        <h1>Server ausgefallen</h1>
+        <p>Unsere Server sind aktuell aufgrund eines Hackerangriffs nicht erreichbar. Wir arbeiten daran, das Problem so schnell wie möglich zu beheben.</p>
+        <p>Vielen Dank für Ihr Verständnis.</p>
     </div>
-
-    <script>
-        // Abonnentenzahl manuell setzen
-        const currentSubscribers = 20; // Hier kannst du die Abonnentenzahl anpassen
-
-        // Elemente im HTML auswählen
-        const subscriberCountEl = document.getElementById("subscriber-count");
-        const rewardMessageEl = document.getElementById("reward-message");
-
-        // Abonnentenzahl im HTML anzeigen
-        subscriberCountEl.textContent = currentSubscribers;
-
-        // Belohnungen basierend auf Abonnentenzahl festlegen
-        if (currentSubscribers >= 20 && currentSubscribers < 35) {
-            rewardMessageEl.textContent = "🎉 Belohnung: 1 Mega Box!";
-        } else if (currentSubscribers >= 35 && currentSubscribers < 50) {
-            rewardMessageEl.textContent = "🎉 Belohnung: 100 Gems und Gold!";
-        } else if (currentSubscribers >= 50) {
-            rewardMessageEl.textContent = "🎉 Belohnung: Eine Überraschung!";
-        } else {
-            rewardMessageEl.textContent = "🎯 Noch keine Belohnungen freigeschaltet.";
-        }
-    </script>
 </body>
 </html>
-    
