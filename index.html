@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Server ausgefallen</title>
+    <title>Serverstatus</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -36,46 +36,39 @@
             }
         }
         .warning-icon {
-            font-size: 100px;
+            font-size: 80px;
             color: #e74c3c;
             margin-bottom: 20px;
         }
-        h1 {
-            font-size: 28px;
+        h1, .message {
+            font-size: 24px;
             margin-bottom: 10px;
-            color: #f1c40f;
             text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
         }
-        p {
-            font-size: 18px;
-            line-height: 1.6;
+        h1 {
+            color: #f1c40f;
         }
-        .btn {
-            margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 16px;
-            color: #fff;
-            background: #e74c3c;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            text-decoration: none;
-            transition: background 0.3s;
-        }
-        .btn:hover {
-            background: #c0392b;
+        .message {
+            display: none;
+            color: #e74c3c;
+            font-size: 28px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" id="content">
         <div class="warning-icon">⚠️</div>
         <h1>Server ausgefallen</h1>
-        <p>
-            Unsere Server sind derzeit nicht erreichbar, da wir einen Hackerangriff festgestellt haben.<br>
-            Unser Team arbeitet intensiv daran, das Problem zu lösen. Bitte haben Sie etwas Geduld.
-        </p>
-        <a href="#" class="btn">Mehr erfahren</a>
+        <p id="initial-message">Unsere Server sind derzeit aufgrund eines Hackerangriffs nicht erreichbar.<br>Bitte warten Sie einen Moment.</p>
+        <p class="message" id="error-message">404 - Seite nicht gefunden</p>
     </div>
+    
+    <script>
+        // Nach 3 Sekunden die Fehlermeldung anzeigen
+        setTimeout(() => {
+            document.getElementById('initial-message').style.display = 'none'; // Verstecke die ursprüngliche Nachricht
+            document.getElementById('error-message').style.display = 'block'; // Zeige die 404-Nachricht
+        }, 3000); // 3000 Millisekunden (3 Sekunden)
+    </script>
 </body>
 </html>
