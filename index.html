@@ -3,21 +3,49 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Brawl Stars Mini-Spiel</title>
+  <title>Mobile Shooter Game</title>
   <style>
     body {
       margin: 0;
       overflow: hidden;
       font-family: Arial, sans-serif;
+      background: black;
     }
     canvas {
       display: block;
       background: #2b2b2b;
     }
+    .controls {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+    .button {
+      width: 60px;
+      height: 60px;
+      background: #444;
+      color: white;
+      font-size: 18px;
+      text-align: center;
+      line-height: 60px;
+      border-radius: 50%;
+      user-select: none;
+    }
+    .button:active {
+      background: #666;
+    }
   </style>
 </head>
 <body>
 <canvas id="gameCanvas"></canvas>
+<div class="controls">
+  <div class="button" id="left">⬅</div>
+  <div class="button" id="shoot">🔥</div>
+  <div class="button" id="right">➡</div>
+</div>
 
 <script>
   const canvas = document.getElementById("gameCanvas");
@@ -30,48 +58,42 @@
   // Spieler-Objekt
   const player = {
     x: canvas.width / 2,
-    y: canvas.height / 2,
-    width: 40,
-    height: 40,
+    y: canvas.height - 80,
+    width: 50,
+    height: 50,
     color: "blue",
-    speed: 5,
+    speed: 10,
     bullets: [],
   };
 
   // Gegner-Array
   const enemies = [];
 
-  // Steuerungsvariablen
-  const keys = {
-    ArrowUp: false,
-    ArrowDown: false,
-    ArrowLeft: false,
-    ArrowRight: false,
-  };
+  // Steuerung
+  let movingLeft = false;
+  let movingRight = false;
 
-  // Bewegung des Spielers
+  // Spieler bewegen
   function movePlayer() {
-    if (keys.ArrowUp && player.y > 0) player.y -= player.speed;
-    if (keys.ArrowDown && player.y + player.height < canvas.height) player.y += player.speed;
-    if (keys.ArrowLeft && player.x > 0) player.x -= player.speed;
-    if (keys.ArrowRight && player.x + player.width < canvas.width) player.x += player.speed;
+    if (movingLeft && player.x > 0) player.x -= player.speed;
+    if (movingRight && player.x + player.width < canvas.width) player.x += player.speed;
   }
 
   // Schießen
   function shootBullet() {
-    player.bullets.push({ x: player.x + player.width / 2 - 5, y: player.y, width: 10, height: 10, color: "yellow" });
+    player.bullets.push({ x: player.x + player.width / 2 - 5, y: player.y, width: 10, height: 20, color: "yellow" });
   }
 
   // Gegner spawnen
   function spawnEnemy() {
-    const size = Math.random() * 30 + 20;
+    const size = Math.random() * 40 + 20;
     enemies.push({
-      x: Math.random() * canvas.width,
+      x: Math.random() * (canvas.width - size),
       y: -size,
       width: size,
       height: size,
       color: "red",
-      speed: Math.random() * 3 + 1,
+      speed: Math.random() * 3 + 2,
     });
   }
 
@@ -79,7 +101,7 @@
   function moveEnemies() {
     enemies.forEach((enemy, index) => {
       enemy.y += enemy.speed;
-      if (enemy.y > canvas.height) enemies.splice(index, 1); // Entfernt Gegner, wenn sie den Bildschirm verlassen
+      if (enemy.y > canvas.height) enemies.splice(index, 1);
     });
   }
 
@@ -93,7 +115,6 @@
           bullet.y < enemy.y + enemy.height &&
           bullet.y + bullet.height > enemy.y
         ) {
-          // Entfernt Kugel und Gegner bei Kollision
           player.bullets.splice(bulletIndex, 1);
           enemies.splice(enemyIndex, 1);
         }
@@ -112,8 +133,8 @@
 
     // Kugeln zeichnen
     player.bullets.forEach((bullet, index) => {
-      bullet.y -= 7; // Kugeln bewegen
-      if (bullet.y < 0) player.bullets.splice(index, 1); // Kugel entfernen, wenn außerhalb des Bildschirms
+      bullet.y -= 10;
+      if (bullet.y < 0) player.bullets.splice(index, 1);
       ctx.fillStyle = bullet.color;
       ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
     });
@@ -137,14 +158,12 @@
   // Gegner alle 2 Sekunden spawnen
   setInterval(spawnEnemy, 2000);
 
-  // Steuerungseingaben erfassen
-  window.addEventListener("keydown", (e) => {
-    if (e.code in keys) keys[e.code] = true;
-    if (e.code === "Space") shootBullet();
-  });
-  window.addEventListener("keyup", (e) => {
-    if (e.code in keys) keys[e.code] = false;
-  });
+  // Touch-Steuerung
+  document.getElementById("left").addEventListener("touchstart", () => (movingLeft = true));
+  document.getElementById("left").addEventListener("touchend", () => (movingLeft = false));
+  document.getElementById("right").addEventListener("touchstart", () => (movingRight = true));
+  document.getElementById("right").addEventListener("touchend", () => (movingRight = false));
+  document.getElementById("shoot").addEventListener("touchstart", shootBullet);
 
   // Spiel starten
   gameLoop();
