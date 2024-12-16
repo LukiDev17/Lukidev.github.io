@@ -1,74 +1,69 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Serverstatus</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #2c3e50, #34495e);
-            color: #ecf0f1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-        }
-        .container {
-            text-align: center;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 30px 40px;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-            animation: fadeIn 1.5s ease-in-out;
-        }
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-        .warning-icon {
-            font-size: 80px;
-            color: #e74c3c;
-            margin-bottom: 20px;
-        }
-        h1, .message {
-            font-size: 24px;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
-        }
-        h1 {
-            color: #f1c40f;
-        }
-        .message {
-            display: none;
-            color: #e74c3c;
-            font-size: 28px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APK Preis Rechner</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .container {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 16px;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+  </style>
 </head>
 <body>
-    <div class="container" id="content">
-        <div class="warning-icon">⚠️</div>
-        <h1>Server ausgefallen</h1>
-        <p id="initial-message">Unsere Server sind derzeit aufgrund eines Hackerangriffs nicht erreichbar.<br>Bitte warten Sie einen Moment.</p>
-        <p class="message" id="error-message">404 - Seite nicht gefunden</p>
-    </div>
-    
-    <script>
-        // Nach 3 Sekunden die Fehlermeldung anzeigen
-        setTimeout(() => {
-            document.getElementById('initial-message').style.display = 'none'; // Verstecke die ursprüngliche Nachricht
-            document.getElementById('error-message').style.display = 'block'; // Zeige die 404-Nachricht
-        }, 3000); // 3000 Millisekunden (3 Sekunden)
-    </script>
+  <div class="container">
+    <h1>APK Preis Rechner</h1>
+    <p>Gib die Anzahl der APKs ein, um den Preis pro APK zu berechnen.</p>
+    <label for="apkCount">Anzahl der APKs:</label>
+    <input type="number" id="apkCount" placeholder="Z. B. 5" min="1" required>
+    <button onclick="calculatePrice()">Preis berechnen</button>
+    <div id="result" class="result" style="display: none;"></div>
+  </div>
+
+  <script>
+    function calculatePrice() {
+      const apkCount = document.getElementById("apkCount").value;
+      const totalEuro = 44; // Gesamtkosten in Euro
+      const euroToDollar = 1.1; // Wechselkurs Euro -> Dollar
+
+      if (apkCount && apkCount > 0) {
+        const pricePerApkEuro = totalEuro / apkCount;
+        const pricePerApkDollar = pricePerApkEuro * euroToDollar;
+
+        // Ergebnis anzeigen
+        document.getElementById("result").style.display = "block";
+        document.getElementById("result").innerHTML = `
+          <strong>Ergebnisse:</strong><br>
+          Gesamtpreis: ${totalEuro.toFixed(2)} €<br>
+          Anzahl der APKs: ${apkCount}<br>
+          Preis pro APK: ${pricePerApkEuro.toFixed(2)} € (${pricePerApkDollar.toFixed(2)} $)
+        `;
+      } else {
+        alert("Bitte gib eine gültige Anzahl von APKs ein.");
+      }
+    }
+  </script>
 </body>
 </html>
