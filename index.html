@@ -1,69 +1,153 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>APK Preis Rechner</title>
+  <title>Brawl Stars Mini-Spiel</title>
   <style>
     body {
+      margin: 0;
+      overflow: hidden;
       font-family: Arial, sans-serif;
-      margin: 20px;
     }
-    .container {
-      max-width: 400px;
-      margin: 0 auto;
-      padding: 20px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-    input, button {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      font-size: 16px;
-    }
-    .result {
-      margin-top: 20px;
-      padding: 10px;
-      background-color: #f9f9f9;
-      border: 1px solid #ddd;
-      border-radius: 5px;
+    canvas {
+      display: block;
+      background: #2b2b2b;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>APK Preis Rechner</h1>
-    <p>Gib die Anzahl der APKs ein, um den Preis pro APK zu berechnen.</p>
-    <label for="apkCount">Anzahl der APKs:</label>
-    <input type="number" id="apkCount" placeholder="Z. B. 5" min="1" required>
-    <button onclick="calculatePrice()">Preis berechnen</button>
-    <div id="result" class="result" style="display: none;"></div>
-  </div>
+<canvas id="gameCanvas"></canvas>
 
-  <script>
-    function calculatePrice() {
-      const apkCount = document.getElementById("apkCount").value;
-      const totalEuro = 44; // Gesamtkosten in Euro
-      const euroToDollar = 1.1; // Wechselkurs Euro -> Dollar
+<script>
+  const canvas = document.getElementById("gameCanvas");
+  const ctx = canvas.getContext("2d");
 
-      if (apkCount && apkCount > 0) {
-        const pricePerApkEuro = totalEuro / apkCount;
-        const pricePerApkDollar = pricePerApkEuro * euroToDollar;
+  // Spielfeld-Einstellungen
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 
-        // Ergebnis anzeigen
-        document.getElementById("result").style.display = "block";
-        document.getElementById("result").innerHTML = `
-          <strong>Ergebnisse:</strong><br>
-          Gesamtpreis: ${totalEuro.toFixed(2)} €<br>
-          Anzahl der APKs: ${apkCount}<br>
-          Preis pro APK: ${pricePerApkEuro.toFixed(2)} € (${pricePerApkDollar.toFixed(2)} $)
-        `;
-      } else {
-        alert("Bitte gib eine gültige Anzahl von APKs ein.");
-      }
-    }
-  </script>
+  // Spieler-Objekt
+  const player = {
+    x: canvas.width / 2,
+    y: canvas.height / 2,
+    width: 40,
+    height: 40,
+    color: "blue",
+    speed: 5,
+    bullets: [],
+  };
+
+  // Gegner-Array
+  const enemies = [];
+
+  // Steuerungsvariablen
+  const keys = {
+    ArrowUp: false,
+    ArrowDown: false,
+    ArrowLeft: false,
+    ArrowRight: false,
+  };
+
+  // Bewegung des Spielers
+  function movePlayer() {
+    if (keys.ArrowUp && player.y > 0) player.y -= player.speed;
+    if (keys.ArrowDown && player.y + player.height < canvas.height) player.y += player.speed;
+    if (keys.ArrowLeft && player.x > 0) player.x -= player.speed;
+    if (keys.ArrowRight && player.x + player.width < canvas.width) player.x += player.speed;
+  }
+
+  // Schießen
+  function shootBullet() {
+    player.bullets.push({ x: player.x + player.width / 2 - 5, y: player.y, width: 10, height: 10, color: "yellow" });
+  }
+
+  // Gegner spawnen
+  function spawnEnemy() {
+    const size = Math.random() * 30 + 20;
+    enemies.push({
+      x: Math.random() * canvas.width,
+      y: -size,
+      width: size,
+      height: size,
+      color: "red",
+      speed: Math.random() * 3 + 1,
+    });
+  }
+
+  // Gegner bewegen
+  function moveEnemies() {
+    enemies.forEach((enemy, index) => {
+      enemy.y += enemy.speed;
+      if (enemy.y > canvas.height) enemies.splice(index, 1); // Entfernt Gegner, wenn sie den Bildschirm verlassen
+    });
+  }
+
+  // Kollisionserkennung
+  function detectCollisions() {
+    player.bullets.forEach((bullet, bulletIndex) => {
+      enemies.forEach((enemy, enemyIndex) => {
+        if (
+          bullet.x < enemy.x + enemy.width &&
+          bullet.x + bullet.width > enemy.x &&
+          bullet.y < enemy.y + enemy.height &&
+          bullet.y + bullet.height > enemy.y
+        ) {
+          // Entfernt Kugel und Gegner bei Kollision
+          player.bullets.splice(bulletIndex, 1);
+          enemies.splice(enemyIndex, 1);
+        }
+      });
+    });
+  }
+
+  // Spiel-Rendering
+  function draw() {
+    // Canvas löschen
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Spieler zeichnen
+    ctx.fillStyle = player.color;
+    ctx.fillRect(player.x, player.y, player.width, player.height);
+
+    // Kugeln zeichnen
+    player.bullets.forEach((bullet, index) => {
+      bullet.y -= 7; // Kugeln bewegen
+      if (bullet.y < 0) player.bullets.splice(index, 1); // Kugel entfernen, wenn außerhalb des Bildschirms
+      ctx.fillStyle = bullet.color;
+      ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
+    });
+
+    // Gegner zeichnen
+    enemies.forEach((enemy) => {
+      ctx.fillStyle = enemy.color;
+      ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+    });
+  }
+
+  // Hauptspielschleife
+  function gameLoop() {
+    movePlayer();
+    moveEnemies();
+    detectCollisions();
+    draw();
+    requestAnimationFrame(gameLoop);
+  }
+
+  // Gegner alle 2 Sekunden spawnen
+  setInterval(spawnEnemy, 2000);
+
+  // Steuerungseingaben erfassen
+  window.addEventListener("keydown", (e) => {
+    if (e.code in keys) keys[e.code] = true;
+    if (e.code === "Space") shootBullet();
+  });
+  window.addEventListener("keyup", (e) => {
+    if (e.code in keys) keys[e.code] = false;
+  });
+
+  // Spiel starten
+  gameLoop();
+</script>
 </body>
 </html>
