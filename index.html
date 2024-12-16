@@ -104,11 +104,12 @@
   // Kollisionserkennung
   function detectCollision() {
     obstacles.forEach((obstacle) => {
+      // Kollisionsbedingungen überprüfen
       if (
-        player.x < obstacle.x + obstacle.width &&
         player.x + player.width > obstacle.x &&
-        player.y < obstacle.y + obstacle.height &&
-        player.y + player.height > obstacle.y
+        player.x < obstacle.x + obstacle.width &&
+        player.y + player.height > obstacle.y &&
+        player.y < obstacle.y + obstacle.height
       ) {
         // Spiel endet
         alert(`Game Over! Score: ${score}`);
@@ -174,4 +175,4 @@
   gameLoop();
 </script>
 </body>
-  </html>
+</html>
