@@ -3,122 +3,117 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mobile Shooter Game</title>
+  <title>Subway Surf Game</title>
   <style>
     body {
       margin: 0;
       overflow: hidden;
       font-family: Arial, sans-serif;
-      background: black;
+      background: #87CEEB; /* Himmelblau */
     }
     canvas {
       display: block;
       background: #2b2b2b;
     }
-    .controls {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      gap: 15px;
+    #gameCanvas {
+      background: linear-gradient(to bottom, #87CEEB, #008000); /* Himmel -> Gras */
     }
     .button {
-      width: 60px;
-      height: 60px;
-      background: #444;
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 20px;
+      background-color: #ff5733;
       color: white;
+      border: none;
+      border-radius: 5px;
       font-size: 18px;
-      text-align: center;
-      line-height: 60px;
-      border-radius: 50%;
-      user-select: none;
+      cursor: pointer;
     }
     .button:active {
-      background: #666;
+      background-color: #ff7846;
     }
   </style>
 </head>
 <body>
 <canvas id="gameCanvas"></canvas>
-<div class="controls">
-  <div class="button" id="left">⬅</div>
-  <div class="button" id="shoot">🔥</div>
-  <div class="button" id="right">➡</div>
-</div>
+<button class="button" id="jumpButton">Jump</button>
 
 <script>
   const canvas = document.getElementById("gameCanvas");
   const ctx = canvas.getContext("2d");
 
-  // Spielfeld-Einstellungen
+  // Canvas-Größe anpassen
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 
-  // Spieler-Objekt
+  // Spieler-Charakter
   const player = {
-    x: canvas.width / 2,
-    y: canvas.height - 80,
+    x: 100,
+    y: canvas.height - 100,
     width: 50,
     height: 50,
-    color: "blue",
-    speed: 10,
-    bullets: [],
+    color: "yellow",
+    dy: 0,
+    gravity: 0.6,
+    jumpForce: -15,
+    grounded: true,
   };
 
-  // Gegner-Array
-  const enemies = [];
+  // Hindernisse
+  const obstacles = [];
+  const obstacleFrequency = 120; // Hindernis alle 120 Frames
+  let frame = 0;
 
-  // Steuerung
-  let movingLeft = false;
-  let movingRight = false;
+  // Punkte
+  let score = 0;
 
-  // Spieler bewegen
-  function movePlayer() {
-    if (movingLeft && player.x > 0) player.x -= player.speed;
-    if (movingRight && player.x + player.width < canvas.width) player.x += player.speed;
+  // Spieler springen
+  function jump() {
+    if (player.grounded) {
+      player.dy = player.jumpForce;
+      player.grounded = false;
+    }
   }
 
-  // Schießen
-  function shootBullet() {
-    player.bullets.push({ x: player.x + player.width / 2 - 5, y: player.y, width: 10, height: 20, color: "yellow" });
-  }
-
-  // Gegner spawnen
-  function spawnEnemy() {
+  // Hindernis erstellen
+  function spawnObstacle() {
     const size = Math.random() * 40 + 20;
-    enemies.push({
-      x: Math.random() * (canvas.width - size),
-      y: -size,
+    obstacles.push({
+      x: canvas.width,
+      y: canvas.height - size,
       width: size,
       height: size,
       color: "red",
-      speed: Math.random() * 3 + 2,
+      speed: 5,
     });
   }
 
-  // Gegner bewegen
-  function moveEnemies() {
-    enemies.forEach((enemy, index) => {
-      enemy.y += enemy.speed;
-      if (enemy.y > canvas.height) enemies.splice(index, 1);
+  // Hindernisse bewegen
+  function moveObstacles() {
+    obstacles.forEach((obstacle, index) => {
+      obstacle.x -= obstacle.speed;
+      if (obstacle.x + obstacle.width < 0) {
+        obstacles.splice(index, 1);
+        score++;
+      }
     });
   }
 
   // Kollisionserkennung
-  function detectCollisions() {
-    player.bullets.forEach((bullet, bulletIndex) => {
-      enemies.forEach((enemy, enemyIndex) => {
-        if (
-          bullet.x < enemy.x + enemy.width &&
-          bullet.x + bullet.width > enemy.x &&
-          bullet.y < enemy.y + enemy.height &&
-          bullet.y + bullet.height > enemy.y
-        ) {
-          player.bullets.splice(bulletIndex, 1);
-          enemies.splice(enemyIndex, 1);
-        }
-      });
+  function detectCollision() {
+    obstacles.forEach((obstacle) => {
+      if (
+        player.x < obstacle.x + obstacle.width &&
+        player.x + player.width > obstacle.x &&
+        player.y < obstacle.y + obstacle.height &&
+        player.y + player.height > obstacle.y
+      ) {
+        // Spiel endet
+        alert(`Game Over! Score: ${score}`);
+        location.reload(); // Neustart
+      }
     });
   }
 
@@ -131,42 +126,52 @@
     ctx.fillStyle = player.color;
     ctx.fillRect(player.x, player.y, player.width, player.height);
 
-    // Kugeln zeichnen
-    player.bullets.forEach((bullet, index) => {
-      bullet.y -= 10;
-      if (bullet.y < 0) player.bullets.splice(index, 1);
-      ctx.fillStyle = bullet.color;
-      ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
+    // Hindernisse zeichnen
+    obstacles.forEach((obstacle) => {
+      ctx.fillStyle = obstacle.color;
+      ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
     });
 
-    // Gegner zeichnen
-    enemies.forEach((enemy) => {
-      ctx.fillStyle = enemy.color;
-      ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
-    });
+    // Punktestand anzeigen
+    ctx.fillStyle = "white";
+    ctx.font = "20px Arial";
+    ctx.fillText(`Score: ${score}`, 10, 30);
   }
 
   // Hauptspielschleife
   function gameLoop() {
-    movePlayer();
-    moveEnemies();
-    detectCollisions();
+    // Physik des Spielers
+    player.dy += player.gravity;
+    player.y += player.dy;
+
+    // Spieler auf den Boden beschränken
+    if (player.y + player.height > canvas.height) {
+      player.y = canvas.height - player.height;
+      player.dy = 0;
+      player.grounded = true;
+    }
+
+    // Hindernisse erzeugen und bewegen
+    if (frame % obstacleFrequency === 0) {
+      spawnObstacle();
+    }
+    moveObstacles();
+
+    // Kollisionen überprüfen
+    detectCollision();
+
+    // Spiel aktualisieren
     draw();
+
+    frame++;
     requestAnimationFrame(gameLoop);
   }
 
-  // Gegner alle 2 Sekunden spawnen
-  setInterval(spawnEnemy, 2000);
-
-  // Touch-Steuerung
-  document.getElementById("left").addEventListener("touchstart", () => (movingLeft = true));
-  document.getElementById("left").addEventListener("touchend", () => (movingLeft = false));
-  document.getElementById("right").addEventListener("touchstart", () => (movingRight = true));
-  document.getElementById("right").addEventListener("touchend", () => (movingRight = false));
-  document.getElementById("shoot").addEventListener("touchstart", shootBullet);
+  // Button-Interaktionen
+  document.getElementById("jumpButton").addEventListener("click", jump);
 
   // Spiel starten
   gameLoop();
 </script>
 </body>
-</html>
+  </html>
