@@ -3,96 +3,94 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dino Game</title>
+  <title>Asteroid Dodge Game</title>
   <style>
     body {
       margin: 0;
       overflow: hidden;
       font-family: Arial, sans-serif;
-      background-color: #f0f0f0;
+      background: black;
+      color: white;
     }
     canvas {
       display: block;
-      background-color: #f0f0f0;
+      background: linear-gradient(to bottom, #000, #001f3f);
     }
-    .button {
+    .score {
       position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 10px 20px;
-      background-color: #ff5733;
+      top: 10px;
+      left: 10px;
+      font-size: 24px;
       color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 18px;
-      cursor: pointer;
-    }
-    .button:active {
-      background-color: #ff7846;
     }
   </style>
 </head>
 <body>
 <canvas id="gameCanvas"></canvas>
-<button class="button" id="jumpButton">Jump</button>
+<div class="score" id="score">Score: 0</div>
 
 <script>
   const canvas = document.getElementById("gameCanvas");
   const ctx = canvas.getContext("2d");
 
-  // Canvas-Größe anpassen
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 
-  // Spieler-Dino
-  const dino = {
-    x: 100,
-    y: canvas.height - 100,
-    width: 50,
-    height: 50,
-    color: "green",
-    dy: 0,
-    gravity: 0.8,
-    jumpForce: -12,
-    grounded: true,
+  // Spieler (Raumschiff)
+  const player = {
+    x: canvas.width / 2 - 20,
+    y: canvas.height - 80,
+    width: 40,
+    height: 60,
+    color: "cyan",
+    speed: 5,
   };
 
-  // Hindernisse
-  const obstacles = [];
-  const obstacleFrequency = 100; // Hindernis alle 100 Frames
+  // Asteroiden
+  const asteroids = [];
+  const asteroidFrequency = 60;
   let frame = 0;
 
   // Punkte
   let score = 0;
 
-  // Dino springen
-  function jump() {
-    if (dino.grounded) {
-      dino.dy = dino.jumpForce;
-      dino.grounded = false;
-    }
-  }
+  // Bewegung
+  const keys = {
+    left: false,
+    right: false,
+  };
 
-  // Hindernis erstellen
-  function spawnObstacle() {
-    const size = Math.random() * 40 + 30;
-    obstacles.push({
-      x: canvas.width,
-      y: canvas.height - size,
+  // Tastatursteuerung
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowLeft") keys.left = true;
+    if (e.key === "ArrowRight") keys.right = true;
+  });
+
+  document.addEventListener("keyup", (e) => {
+    if (e.key === "ArrowLeft") keys.left = false;
+    if (e.key === "ArrowRight") keys.right = false;
+  });
+
+  // Asteroiden erstellen
+  function spawnAsteroid() {
+    const size = Math.random() * 40 + 20;
+    const x = Math.random() * (canvas.width - size);
+    asteroids.push({
+      x: x,
+      y: -size,
       width: size,
       height: size,
-      color: "brown",
-      speed: 5,
+      color: "red",
+      speed: Math.random() * 3 + 2,
     });
   }
 
-  // Hindernisse bewegen
-  function moveObstacles() {
-    obstacles.forEach((obstacle, index) => {
-      obstacle.x -= obstacle.speed;
-      if (obstacle.x + obstacle.width < 0) {
-        obstacles.splice(index, 1);
+  // Asteroiden bewegen
+  function moveAsteroids() {
+    asteroids.forEach((asteroid, index) => {
+      asteroid.y += asteroid.speed;
+      if (asteroid.y > canvas.height) {
+        asteroids.splice(index, 1);
         score++;
       }
     });
@@ -100,74 +98,58 @@
 
   // Kollisionserkennung
   function detectCollision() {
-    obstacles.forEach((obstacle) => {
+    asteroids.forEach((asteroid) => {
       if (
-        dino.x + dino.width > obstacle.x &&
-        dino.x < obstacle.x + obstacle.width &&
-        dino.y + dino.height > obstacle.y &&
-        dino.y < obstacle.y + obstacle.height
+        player.x < asteroid.x + asteroid.width &&
+        player.x + player.width > asteroid.x &&
+        player.y < asteroid.y + asteroid.height &&
+        player.y + player.height > asteroid.y
       ) {
-        // Spiel endet
-        alert(`Game Over! Score: ${score}`);
-        location.reload(); // Neustart
+        alert(`Game Over! Final Score: ${score}`);
+        location.reload();
       }
     });
   }
 
-  // Spiel-Rendering
+  // Spieler bewegen
+  function movePlayer() {
+    if (keys.left && player.x > 0) player.x -= player.speed;
+    if (keys.right && player.x + player.width < canvas.width) player.x += player.speed;
+  }
+
+  // Spiel rendern
   function draw() {
-    // Canvas löschen
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Dino zeichnen
-    ctx.fillStyle = dino.color;
-    ctx.fillRect(dino.x, dino.y, dino.width, dino.height);
+    // Spieler zeichnen
+    ctx.fillStyle = player.color;
+    ctx.fillRect(player.x, player.y, player.width, player.height);
 
-    // Hindernisse zeichnen
-    obstacles.forEach((obstacle) => {
-      ctx.fillStyle = obstacle.color;
-      ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+    // Asteroiden zeichnen
+    asteroids.forEach((asteroid) => {
+      ctx.fillStyle = asteroid.color;
+      ctx.fillRect(asteroid.x, asteroid.y, asteroid.width, asteroid.height);
     });
 
     // Punktestand anzeigen
-    ctx.fillStyle = "black";
-    ctx.font = "20px Arial";
-    ctx.fillText(`Score: ${score}`, 10, 30);
+    document.getElementById("score").innerText = `Score: ${score}`;
   }
 
   // Hauptspielschleife
   function gameLoop() {
-    // Physik des Dinos
-    dino.dy += dino.gravity;
-    dino.y += dino.dy;
-
-    // Dino auf den Boden beschränken
-    if (dino.y + dino.height > canvas.height) {
-      dino.y = canvas.height - dino.height;
-      dino.dy = 0;
-      dino.grounded = true;
+    frame++;
+    if (frame % asteroidFrequency === 0) {
+      spawnAsteroid();
     }
 
-    // Hindernisse erzeugen und bewegen
-    if (frame % obstacleFrequency === 0) {
-      spawnObstacle();
-    }
-    moveObstacles();
-
-    // Kollisionen überprüfen
+    movePlayer();
+    moveAsteroids();
     detectCollision();
-
-    // Spiel aktualisieren
     draw();
 
-    frame++;
     requestAnimationFrame(gameLoop);
   }
 
-  // Button-Interaktionen
-  document.getElementById("jumpButton").addEventListener("click", jump);
-
-  // Spiel starten
   gameLoop();
 </script>
 </body>
