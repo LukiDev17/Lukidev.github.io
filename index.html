@@ -36,31 +36,32 @@
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 
-  // Spieler (Raumschiff)
-  const player = {
-    x: canvas.width / 2 - 20,
-    y: canvas.height - 80,
-    width: 40,
-    height: 60,
-    color: "cyan",
-    speed: 5,
-  };
+  let player, asteroids, frame, score, keys;
 
-  // Asteroiden
-  const asteroids = [];
-  const asteroidFrequency = 60;
-  let frame = 0;
+  // Spieler und Spiel zurücksetzen
+  function resetGame() {
+    player = {
+      x: canvas.width / 2 - 20,
+      y: canvas.height - 80,
+      width: 40,
+      height: 60,
+      color: "cyan",
+      speed: 5,
+    };
 
-  // Punkte
-  let score = 0;
+    asteroids = [];
+    frame = 0;
+    score = 0;
+
+    keys = {
+      left: false,
+      right: false,
+    };
+  }
+
+  resetGame(); // Spiel initialisieren
 
   // Bewegung
-  const keys = {
-    left: false,
-    right: false,
-  };
-
-  // Tastatursteuerung
   document.addEventListener("keydown", (e) => {
     if (e.key === "ArrowLeft") keys.left = true;
     if (e.key === "ArrowRight") keys.right = true;
@@ -105,8 +106,9 @@
         player.y < asteroid.y + asteroid.height &&
         player.y + player.height > asteroid.y
       ) {
+        // Spiel zurücksetzen
         alert(`Game Over! Final Score: ${score}`);
-        location.reload();
+        resetGame();
       }
     });
   }
@@ -138,7 +140,7 @@
   // Hauptspielschleife
   function gameLoop() {
     frame++;
-    if (frame % asteroidFrequency === 0) {
+    if (frame % 60 === 0) {
       spawnAsteroid();
     }
 
