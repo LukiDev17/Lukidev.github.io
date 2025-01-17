@@ -1,113 +1,64 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Anonymous Chat</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f9;
-    }
-    header {
-      background-color: #4CAF50;
-      color: white;
-      padding: 10px 20px;
-      text-align: center;
-      font-size: 1.5rem;
-    }
-    .chat-container {
-      display: flex;
-      flex-direction: column;
-      height: 90vh;
-      max-width: 600px;
-      margin: 0 auto;
-      border: 1px solid #ddd;
-      background-color: white;
-    }
-    .messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 10px;
-      border-bottom: 1px solid #ddd;
-    }
-    .message {
-      margin-bottom: 10px;
-      padding: 10px;
-      border-radius: 5px;
-      background-color: #e7f3e7;
-      color: #333;
-    }
-    .message.user {
-      background-color: #dbe9ff;
-      text-align: right;
-    }
-    .chat-input {
-      display: flex;
-      padding: 10px;
-      border-top: 1px solid #ddd;
-      background-color: #f9f9f9;
-    }
-    .chat-input input {
-      flex: 1;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
-    .chat-input button {
-      margin-left: 10px;
-      padding: 10px 20px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    .chat-input button:hover {
-      background-color: #45a049;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meine APK-Downloads</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+        main {
+            padding: 20px;
+        }
+        .apk-link {
+            display: block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            text-decoration: none;
+            margin: 10px 0;
+        }
+        .apk-link:hover {
+            background-color: #45a049;
+        }
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+    </style>
 </head>
 <body>
 
-<header>Anonymous Chat</header>
+<header>
+    <h1>Willkommen auf meiner APK-Download-Seite</h1>
+    <p>Lade die neueste Version meiner App herunter</p>
+</header>
 
-<div class="chat-container">
-  <div class="messages" id="messages">
-    <!-- Messages will appear here -->
-  </div>
-  <div class="chat-input">
-    <input type="text" id="messageInput" placeholder="Type a message..." />
-    <button onclick="sendMessage()">Send</button>
-  </div>
-</div>
+<main>
+    <h2>APK-Downloads</h2>
+    <a href="link-zu-deiner-apk.apk" class="apk-link" download>APK Version 1.0.0 herunterladen</a>
+    <p>Stelle sicher, dass du die APK nur von vertrauenswürdigen Quellen herunterlädst. Weitere Details findest du in der Dokumentation.</p>
+</main>
 
-<script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
-<script>
-  const socket = io('http://localhost:3000'); // Replace with your server address
-  const messagesContainer = document.getElementById('messages');
-  const messageInput = document.getElementById('messageInput');
-
-  // Send message
-  function sendMessage() {
-    const messageText = messageInput.value.trim();
-
-    if (messageText === '') return;
-
-    socket.emit('chatMessage', messageText); // Send message to the server
-    messageInput.value = '';
-  }
-
-  // Receive message from server
-  socket.on('chatMessage', (data) => {
-    const messageElement = document.createElement('div');
-    messageElement.className = 'message';
-    messageElement.textContent = data;
-    messagesContainer.appendChild(messageElement);
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-  });
-</script>
+<footer>
+    <p>&copy; 2025 Meine App - Alle Rechte vorbehalten.</p>
+</footer>
 
 </body>
 </html>
