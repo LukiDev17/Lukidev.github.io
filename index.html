@@ -3,177 +3,80 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Asteroid Dodge Game</title>
+  <title>My Latest Projects</title>
   <style>
     body {
-      margin: 0;
-      overflow: hidden;
       font-family: Arial, sans-serif;
-      background: black;
-      color: white;
+      background-color: #121212;
+      color: #fff;
+      margin: 0;
+      padding: 0;
     }
-    canvas {
-      display: block;
-      background: linear-gradient(to bottom, #000, #001f3f);
-    }
-    .score {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      font-size: 24px;
-      color: white;
-    }
-    .maintenance {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 30px;
-      color: red;
+    h1 {
+      color: #39ff14;
       text-align: center;
+      margin-top: 20px;
+    }
+    #projects-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 20px;
+    }
+    .project {
+      background-color: #1e1e1e;
+      padding: 15px;
+      margin: 10px;
+      border-radius: 8px;
+      width: 250px;
+      text-align: center;
+    }
+    .project a {
+      color: #39ff14;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .project p {
+      color: #ccc;
     }
   </style>
 </head>
 <body>
-<canvas id="gameCanvas"></canvas>
-<div class="score" id="score">Score: 0</div>
-<div class="maintenance" id="maintenance" style="display: none;">⚠️ Wartungsarbeiten laufen! ⚠️</div>
 
-<script>
-  // Wartungsstatus
-  let maintenance = true; // Auf true setzen, um Wartungsarbeiten zu aktivieren
+  <h1>Latest Projects by @LukiDev17</h1>
 
-  // Elemente
-  const canvas = document.getElementById("gameCanvas");
-  const ctx = canvas.getContext("2d");
-  const maintenanceDiv = document.getElementById("maintenance");
+  <div id="projects-container">
+    <p>Loading...</p>
+  </div>
 
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  <script>
+    // Using GitHub API to fetch the latest repositories
+    fetch('https://api.github.com/users/LukiDev17/repos?sort=updated')
+      .then(response => response.json())
+      .then(repositories => {
+        const projectsContainer = document.getElementById('projects-container');
+        projectsContainer.innerHTML = ''; // Remove loading text
 
-  let player, asteroids, frame, score, keys;
+        // Display the top 6 latest projects
+        repositories.slice(0, 6).forEach(repo => {
+          const projectElement = document.createElement('div');
+          projectElement.className = 'project';
 
-  // Spieler und Spiel zurücksetzen
-  function resetGame() {
-    player = {
-      x: canvas.width / 2 - 20,
-      y: canvas.height - 80,
-      width: 40,
-      height: 60,
-      color: "cyan",
-      speed: 5,
-    };
+          projectElement.innerHTML = `
+            <h3>${repo.name}</h3>
+            <p>${repo.description || 'No description available'}</p>
+            <a href="${repo.html_url}" target="_blank">View Project</a>
+          `;
 
-    asteroids = [];
-    frame = 0;
-    score = 0;
+          projectsContainer.appendChild(projectElement);
+        });
+      })
+      .catch(error => {
+        const projectsContainer = document.getElementById('projects-container');
+        projectsContainer.innerHTML = '<p>Error loading projects.</p>';
+        console.error('Error fetching GitHub repositories:', error);
+      });
+  </script>
 
-    keys = {
-      left: false,
-      right: false,
-    };
-  }
-
-  resetGame(); // Spiel initialisieren
-
-  // Bewegung
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "ArrowLeft") keys.left = true;
-    if (e.key === "ArrowRight") keys.right = true;
-  });
-
-  document.addEventListener("keyup", (e) => {
-    if (e.key === "ArrowLeft") keys.left = false;
-    if (e.key === "ArrowRight") keys.right = false;
-  });
-
-  // Asteroiden erstellen
-  function spawnAsteroid() {
-    const size = Math.random() * 40 + 20;
-    const x = Math.random() * (canvas.width - size);
-    asteroids.push({
-      x: x,
-      y: -size,
-      width: size,
-      height: size,
-      color: "red",
-      speed: Math.random() * 3 + 2,
-    });
-  }
-
-  // Asteroiden bewegen
-  function moveAsteroids() {
-    asteroids.forEach((asteroid, index) => {
-      asteroid.y += asteroid.speed;
-      if (asteroid.y > canvas.height) {
-        asteroids.splice(index, 1);
-        score++;
-      }
-    });
-  }
-
-  // Kollisionserkennung
-  function detectCollision() {
-    asteroids.forEach((asteroid) => {
-      if (
-        player.x < asteroid.x + asteroid.width &&
-        player.x + player.width > asteroid.x &&
-        player.y < asteroid.y + asteroid.height &&
-        player.y + player.height > asteroid.y
-      ) {
-        alert(`Game Over! Final Score: ${score}`);
-        resetGame();
-      }
-    });
-  }
-
-  // Spieler bewegen
-  function movePlayer() {
-    if (keys.left && player.x > 0) player.x -= player.speed;
-    if (keys.right && player.x + player.width < canvas.width) player.x += player.speed;
-  }
-
-  // Spiel rendern
-  function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Spieler zeichnen
-    ctx.fillStyle = player.color;
-    ctx.fillRect(player.x, player.y, player.width, player.height);
-
-    // Asteroiden zeichnen
-    asteroids.forEach((asteroid) => {
-      ctx.fillStyle = asteroid.color;
-      ctx.fillRect(asteroid.x, asteroid.y, asteroid.width, asteroid.height);
-    });
-
-    // Punktestand anzeigen
-    document.getElementById("score").innerText = `Score: ${score}`;
-  }
-
-  // Hauptspielschleife
-  function gameLoop() {
-    if (maintenance) {
-      maintenanceDiv.style.display = "block"; // Wartungsnachricht anzeigen
-      return; // Spiel pausieren
-    } else {
-      maintenanceDiv.style.display = "none"; // Wartungsnachricht ausblenden
-    }
-
-    frame++;
-    if (frame % 60 === 0) {
-      spawnAsteroid();
-    }
-
-    movePlayer();
-    moveAsteroids();
-    detectCollision();
-    draw();
-
-    requestAnimationFrame(gameLoop);
-  }
-
-  gameLoop();
-</script>
 </body>
 </html>
