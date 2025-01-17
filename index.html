@@ -11,19 +11,16 @@
       background-color: #f4f4f4;
       color: #333;
     }
-    .project {
+    .project, .admin-access {
       background-color: #fff;
       padding: 15px;
       margin: 10px 0;
       border-radius: 5px;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
-    .project h3 {
+    .project h3, .admin-access h3 {
       margin: 0;
       color: #2c3e50;
-    }
-    .project p {
-      margin: 5px 0;
     }
     #search-bar {
       padding: 10px;
@@ -56,127 +53,108 @@
       margin-bottom: 20px;
       border-radius: 5px;
     }
-    body.dark-theme {
-      background-color: #121212;
-      color: #fff;
+    .hidden {
+      display: none;
     }
-    body.dark-theme .project {
-      background-color: #1f1f1f;
-      color: #fff;
-    }
-    #pagination {
+    #admin-login {
+      margin: 20px auto;
       text-align: center;
-      margin-top: 20px;
     }
-    #pagination button {
-      padding: 5px 10px;
-      margin: 0 5px;
-      border: none;
+    #admin-login input {
+      padding: 10px;
+      margin: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    #admin-login button {
+      padding: 10px;
       background-color: #39ff14;
       color: #fff;
-      cursor: pointer;
+      border: none;
       border-radius: 5px;
-    }
-    #pagination button:hover {
-      background-color: #2ecc71;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
 
-  <div id="maintenance-mode" class="maintenance-mode" style="display: none;">The site is under maintenance. Please check back later.</div>
+  <div id="maintenance-mode" class="maintenance-mode">The site is under maintenance. Admins can unlock access with a password.</div>
 
-  <input type="text" id="search-bar" placeholder="Search projects..." />
+  <!-- Admin login form -->
+  <div id="admin-login" class="hidden">
+    <h3>Admin Login</h3>
+    <input type="password" id="admin-password" placeholder="Enter Admin Password">
+    <button id="admin-access-btn">Unlock Site</button>
+  </div>
 
-  <div id="projects-container"></div>
-  <div id="pagination"></div>
+  <!-- Search bar for projects -->
+  <input type="text" id="search-bar" class="hidden" placeholder="Search projects...">
 
-  <button id="theme-toggle">Switch to Dark Mode</button>
-  <button id="maintenance-toggle" style="display: none;">Turn Maintenance Mode On</button>
+  <div id="projects-container" class="hidden"></div>
+  <div id="pagination" class="hidden"></div>
+
+  <!-- Dark/Light mode toggle button -->
+  <button id="theme-toggle" class="hidden">Switch to Dark Mode</button>
+
+  <!-- Maintenance mode toggle button -->
+  <button id="maintenance-toggle">Turn Maintenance Mode Off</button>
 
   <script>
-    let maintenanceMode = false;
-    const adminPassword = "secureAdminPass123"; // Set a strong admin password
+    let maintenanceMode = true; // Toggle maintenance mode
+    const adminPassword = 'securepassword'; // Set your admin password
 
-    const repositories = [/* Same repositories array as before */];
-
+    // Toggle maintenance mode visibility
     function toggleMaintenanceMode() {
       const maintenanceElement = document.getElementById('maintenance-mode');
-      const maintenanceToggleButton = document.getElementById('maintenance-toggle');
+      const searchBar = document.getElementById('search-bar');
+      const projectsContainer = document.getElementById('projects-container');
+      const pagination = document.getElementById('pagination');
+      const themeToggle = document.getElementById('theme-toggle');
+      const adminLogin = document.getElementById('admin-login');
+
       if (maintenanceMode) {
         maintenanceElement.style.display = 'block';
-        maintenanceToggleButton.textContent = 'Turn Maintenance Mode Off';
+        searchBar.classList.add('hidden');
+        projectsContainer.classList.add('hidden');
+        pagination.classList.add('hidden');
+        themeToggle.classList.add('hidden');
+        adminLogin.classList.remove('hidden');
       } else {
         maintenanceElement.style.display = 'none';
-        maintenanceToggleButton.textContent = 'Turn Maintenance Mode On';
+        searchBar.classList.remove('hidden');
+        projectsContainer.classList.remove('hidden');
+        pagination.classList.remove('hidden');
+        themeToggle.classList.remove('hidden');
+        adminLogin.classList.add('hidden');
       }
     }
 
-    function renderProjects(page) {
-      if (maintenanceMode) return;
-
-      const PAGE_SIZE = 6;
-      const start = (page - 1) * PAGE_SIZE;
-      const end = page * PAGE_SIZE;
-      const projectsToShow = repositories.slice(start, end);
-
-      const projectsContainer = document.getElementById('projects-container');
-      projectsContainer.innerHTML = ''; // Clear previous projects
-
-      projectsToShow.forEach(repo => {
-        const projectElement = document.createElement('div');
-        projectElement.className = 'project';
-
-        const createdDate = new Date(repo.created_at).toLocaleDateString();
-        const language = repo.language || 'Not Specified';
-        const projectStatus = repo.name.toLowerCase().includes('wip') ? 'Work In Progress' : 'Completed';
-
-        projectElement.innerHTML = `
-          <h3>${repo.name}</h3>
-          <p>${repo.description || 'No description available'}</p>
-          <p><strong>Status:</strong> ${projectStatus}</p>
-          <p><strong>Stars:</strong> ${repo.stargazers_count} | <strong>Forks:</strong> ${repo.forks_count}</p>
-          <p><strong>Created:</strong> ${createdDate}</p>
-          <p><strong>Language:</strong> ${language}</p>
-          <a href="${repo.html_url}" target="_blank">View Project</a>
-        `;
-
-        projectsContainer.appendChild(projectElement);
-      });
-
-      const paginationContainer = document.getElementById('pagination');
-      paginationContainer.innerHTML = '';
-
-      const totalPages = Math.ceil(repositories.length / PAGE_SIZE);
-      for (let i = 1; i <= totalPages; i++) {
-        const button = document.createElement('button');
-        button.textContent = i;
-        button.onclick = () => renderProjects(i);
-        paginationContainer.appendChild(button);
-      }
-    }
-
-    document.getElementById('theme-toggle').addEventListener('click', function() {
-      document.body.classList.toggle('dark-theme');
-      this.textContent = document.body.classList.contains('dark-theme') ? 'Switch to Light Mode' : 'Switch to Dark Mode';
-    });
-
-    document.addEventListener('DOMContentLoaded', () => {
-      const password = prompt('Enter admin password to access maintenance controls:');
-      if (password === adminPassword) {
-        document.getElementById('maintenance-toggle').style.display = 'block';
+    // Admin access functionality
+    document.getElementById('admin-access-btn').addEventListener('click', function() {
+      const passwordInput = document.getElementById('admin-password').value;
+      if (passwordInput === adminPassword) {
+        alert('Access granted!');
+        maintenanceMode = false;
+        toggleMaintenanceMode();
+        renderProjects(1); // Render projects after maintenance mode ends
       } else {
-        alert('Access denied.');
+        alert('Incorrect password!');
       }
     });
 
+    // Render projects (placeholder)
+    function renderProjects(page) {
+      const projectsContainer = document.getElementById('projects-container');
+      projectsContainer.innerHTML = '<p>Projects loaded!</p>';
+    }
+
+    // Maintenance mode toggle
     document.getElementById('maintenance-toggle').addEventListener('click', function() {
       maintenanceMode = !maintenanceMode;
       toggleMaintenanceMode();
-      renderProjects(1);
     });
 
-    renderProjects(1);
+    // Initial load
     toggleMaintenanceMode();
   </script>
 </body>
