@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wartungsmodus - Meine APK-Downloads</title>
+    <title>Meine APK-Download-Seite</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -42,12 +42,11 @@
             width: 100%;
             bottom: 0;
         }
-        .maintenance {
-            background-color: #f44336;
-            color: white;
-            padding: 20px;
-            border-radius: 5px;
-            font-size: 1.2em;
+        .maintenance-message {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 24px;
+            color: red;
         }
     </style>
 </head>
@@ -55,20 +54,39 @@
 
 <header>
     <h1>Willkommen auf meiner APK-Download-Seite</h1>
-    <p>Der Service ist derzeit in Wartung</p>
 </header>
 
-<main>
-    <div class="maintenance">
-        <h2>Wartungsmodus aktiv</h2>
-        <p>Unsere Webseite wird gerade gewartet und ist vorübergehend nicht verfügbar. Bitte versuchen Sie es später noch einmal.</p>
-    </div>
-    <p>Danke für dein Verständnis!</p>
+<main id="main-content">
+    <!-- Normale Seite Inhalt -->
+    <h2>APK-Downloads</h2>
+    <a href="link-zu-deiner-apk.apk" class="apk-link" download>APK Version 1.0.0 herunterladen</a>
+    <p>Stelle sicher, dass du die APK nur von vertrauenswürdigen Quellen herunterlädst. Weitere Details findest du in der Dokumentation.</p>
 </main>
+
+<div id="maintenance-message" class="maintenance-message" style="display: none;">
+    <h1>Wartungsmodus aktiv</h1>
+    <p>Unsere Webseite wird gerade gewartet und ist vorübergehend nicht verfügbar. Bitte versuche es später noch einmal.</p>
+    <p>Danke für dein Verständnis!</p>
+</div>
 
 <footer>
     <p>&copy; 2025 Meine App - Alle Rechte vorbehalten.</p>
 </footer>
+
+<script>
+    // Wartungsmodus aktivieren/deaktivieren
+    var maintenanceMode = true; // Setze dies auf 'true', um den Wartungsmodus zu aktivieren, 'false' um ihn zu deaktivieren
+
+    if (maintenanceMode) {
+        // Zeigt die Wartungsmodus-Nachricht und versteckt den normalen Inhalt
+        document.getElementById('main-content').style.display = 'none';
+        document.getElementById('maintenance-message').style.display = 'block';
+    } else {
+        // Zeigt den normalen Inhalt und versteckt die Wartungsmodus-Nachricht
+        document.getElementById('main-content').style.display = 'block';
+        document.getElementById('maintenance-message').style.display = 'none';
+    }
+</script>
 
 </body>
 </html>
