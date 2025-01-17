@@ -3,80 +3,265 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Latest Projects</title>
+  <title>Latest Projects</title>
   <style>
     body {
       font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+    .project {
+      background-color: #fff;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .project h3 {
+      margin: 0;
+      color: #2c3e50;
+    }
+    .project p {
+      margin: 5px 0;
+    }
+    #search-bar {
+      padding: 10px;
+      width: 80%;
+      margin: 20px auto;
+      display: block;
+      border-radius: 5px;
+    }
+    #theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px;
+      background-color: #39ff14;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+    }
+    #maintenance-toggle {
+      position: fixed;
+      top: 60px;
+      right: 20px;
+      padding: 10px;
+      background-color: #e74c3c;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+    }
+    .maintenance-mode {
+      text-align: center;
+      font-size: 24px;
+      background-color: #f1c40f;
+      color: #fff;
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+    }
+    body.dark-theme {
       background-color: #121212;
       color: #fff;
-      margin: 0;
-      padding: 0;
     }
-    h1 {
-      color: #39ff14;
+    body.dark-theme .project {
+      background-color: #1f1f1f;
+      color: #fff;
+    }
+    #pagination {
       text-align: center;
       margin-top: 20px;
     }
-    #projects-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      padding: 20px;
+    #pagination button {
+      padding: 5px 10px;
+      margin: 0 5px;
+      border: none;
+      background-color: #39ff14;
+      color: #fff;
+      cursor: pointer;
+      border-radius: 5px;
     }
-    .project {
-      background-color: #1e1e1e;
-      padding: 15px;
-      margin: 10px;
-      border-radius: 8px;
-      width: 250px;
-      text-align: center;
-    }
-    .project a {
-      color: #39ff14;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .project p {
-      color: #ccc;
+    #pagination button:hover {
+      background-color: #2ecc71;
     }
   </style>
 </head>
 <body>
 
-  <h1>Latest Projects by @LukiDev17</h1>
+  <div id="maintenance-mode" class="maintenance-mode" style="display: none;">The site is under maintenance. Please check back later.</div>
 
-  <div id="projects-container">
-    <p>Loading...</p>
-  </div>
+  <!-- Search bar for projects -->
+  <input type="text" id="search-bar" placeholder="Search projects..." />
+
+  <div id="projects-container"></div>
+
+  <div id="pagination"></div>
+
+  <!-- Dark/Light mode toggle button -->
+  <button id="theme-toggle">Switch to Dark Mode</button>
+
+  <!-- Maintenance mode toggle button -->
+  <button id="maintenance-toggle">Turn Maintenance Mode On</button>
 
   <script>
-    // Using GitHub API to fetch the latest repositories
-    fetch('https://api.github.com/users/LukiDev17/repos?sort=updated')
-      .then(response => response.json())
-      .then(repositories => {
-        const projectsContainer = document.getElementById('projects-container');
-        projectsContainer.innerHTML = ''; // Remove loading text
+    let maintenanceMode = true; // Toggle maintenance mode
+    const repositories = [
+      {
+        name: 'Project 1',
+        description: 'Description of Project 1',
+        stargazers_count: 50,
+        forks_count: 25,
+        language: 'JavaScript',
+        created_at: '2023-05-01',
+        html_url: 'https://github.com/project1'
+      },
+      {
+        name: 'Project 2',
+        description: 'Description of Project 2',
+        stargazers_count: 100,
+        forks_count: 40,
+        language: 'Python',
+        created_at: '2023-06-15',
+        html_url: 'https://github.com/project2'
+      },
+      {
+        name: 'Project 3',
+        description: 'Description of Project 3',
+        stargazers_count: 75,
+        forks_count: 30,
+        language: 'Java',
+        created_at: '2023-07-01',
+        html_url: 'https://github.com/project3'
+      },
+      {
+        name: 'Project 4',
+        description: 'Description of Project 4',
+        stargazers_count: 150,
+        forks_count: 70,
+        language: 'C++',
+        created_at: '2023-08-20',
+        html_url: 'https://github.com/project4'
+      },
+      {
+        name: 'Project 5',
+        description: 'Description of Project 5',
+        stargazers_count: 200,
+        forks_count: 90,
+        language: 'Ruby',
+        created_at: '2023-09-10',
+        html_url: 'https://github.com/project5'
+      },
+      {
+        name: 'Project 6',
+        description: 'Description of Project 6',
+        stargazers_count: 125,
+        forks_count: 60,
+        language: 'PHP',
+        created_at: '2023-10-05',
+        html_url: 'https://github.com/project6'
+      }
+    ];
 
-        // Display the top 6 latest projects
-        repositories.slice(0, 6).forEach(repo => {
-          const projectElement = document.createElement('div');
-          projectElement.className = 'project';
+    // Toggle maintenance mode visibility
+    function toggleMaintenanceMode() {
+      const maintenanceElement = document.getElementById('maintenance-mode');
+      const maintenanceToggleButton = document.getElementById('maintenance-toggle');
+      if (maintenanceMode) {
+        maintenanceElement.style.display = 'block';
+        maintenanceToggleButton.textContent = 'Turn Maintenance Mode Off';
+      } else {
+        maintenanceElement.style.display = 'none';
+        maintenanceToggleButton.textContent = 'Turn Maintenance Mode On';
+      }
+    }
 
-          projectElement.innerHTML = `
-            <h3>${repo.name}</h3>
-            <p>${repo.description || 'No description available'}</p>
-            <a href="${repo.html_url}" target="_blank">View Project</a>
-          `;
+    // Render the projects with all the details
+    function renderProjects(page) {
+      if (maintenanceMode) return;
 
-          projectsContainer.appendChild(projectElement);
-        });
-      })
-      .catch(error => {
-        const projectsContainer = document.getElementById('projects-container');
-        projectsContainer.innerHTML = '<p>Error loading projects.</p>';
-        console.error('Error fetching GitHub repositories:', error);
+      const PAGE_SIZE = 6;
+      const start = (page - 1) * PAGE_SIZE;
+      const end = page * PAGE_SIZE;
+      const projectsToShow = repositories.slice(start, end);
+
+      const projectsContainer = document.getElementById('projects-container');
+      projectsContainer.innerHTML = ''; // Clear previous projects
+
+      projectsToShow.forEach(repo => {
+        const projectElement = document.createElement('div');
+        projectElement.className = 'project';
+
+        const createdDate = new Date(repo.created_at).toLocaleDateString();
+        const language = repo.language || 'Not Specified';
+        const projectStatus = repo.name.toLowerCase().includes('wip') ? 'Work In Progress' : 'Completed';
+
+        projectElement.innerHTML = `
+          <h3>${repo.name}</h3>
+          <p>${repo.description || 'No description available'}</p>
+          <p><strong>Status:</strong> ${projectStatus}</p>
+          <p><strong>Stars:</strong> ${repo.stargazers_count} | <strong>Forks:</strong> ${repo.forks_count}</p>
+          <p><strong>Created:</strong> ${createdDate}</p>
+          <p><strong>Language:</strong> ${language}</p>
+          <a href="${repo.html_url}" target="_blank">View Project</a>
+        `;
+
+        projectsContainer.appendChild(projectElement);
       });
-  </script>
 
+      // Handle pagination buttons
+      const paginationContainer = document.getElementById('pagination');
+      paginationContainer.innerHTML = '';
+
+      const totalPages = Math.ceil(repositories.length / PAGE_SIZE);
+      for (let i = 1; i <= totalPages; i++) {
+        const button = document.createElement('button');
+        button.textContent = i;
+        button.onclick = () => {
+          renderProjects(i);
+        };
+        paginationContainer.appendChild(button);
+      }
+    }
+
+    // Dark/Light mode toggle
+    document.getElementById('theme-toggle').addEventListener('click', function() {
+      const body = document.body;
+      body.classList.toggle('dark-theme');
+      if (body.classList.contains('dark-theme')) {
+        this.textContent = 'Switch to Light Mode';
+      } else {
+        this.textContent = 'Switch to Dark Mode';
+      }
+    });
+
+    // Maintenance mode toggle
+    document.getElementById('maintenance-toggle').addEventListener('click', function() {
+      maintenanceMode = !maintenanceMode;
+      toggleMaintenanceMode();
+      renderProjects(1); // Re-render the projects to reflect the maintenance mode
+    });
+
+    // Search functionality
+    document.getElementById('search-bar').addEventListener('input', function() {
+      const searchQuery = this.value.toLowerCase();
+      const projectItems = document.querySelectorAll('.project');
+
+      projectItems.forEach(item => {
+        const name = item.querySelector('h3').textContent.toLowerCase();
+        const description = item.querySelector('p').textContent.toLowerCase();
+
+        if (name.includes(searchQuery) || description.includes(searchQuery)) {
+          item.style.display = 'block';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    });
+
+    // Initial load
+    renderProjects(1);
+    toggleMaintenanceMode(); // Set maintenance mode (on or off)
+  </script>
 </body>
 </html>
