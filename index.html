@@ -3,159 +3,155 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Latest Projects</title>
+  <title>YouTube Clone</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      background-color: #f4f4f4;
-      color: #333;
-    }
-    .project, .admin-access {
-      background-color: #fff;
-      padding: 15px;
-      margin: 10px 0;
-      border-radius: 5px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-    .project h3, .admin-access h3 {
       margin: 0;
-      color: #2c3e50;
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
     }
-    #search-bar {
-      padding: 10px;
-      width: 80%;
-      margin: 20px auto;
-      display: block;
-      border-radius: 5px;
+    header {
+      background-color: #ff0000;
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
-    #theme-toggle, #maintenance-toggle {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      padding: 10px;
-      background-color: #39ff14;
-      color: #fff;
+    header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    header input {
+      padding: 7px;
       border: none;
-      border-radius: 5px;
+      border-radius: 4px;
+      width: 300px;
+    }
+    header button {
+      padding: 7px 15px;
+      background-color: white;
+      color: #ff0000;
+      border: none;
+      border-radius: 4px;
       cursor: pointer;
     }
-    #maintenance-toggle {
-      top: 60px;
-      background-color: #e74c3c;
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      padding: 20px;
     }
-    .maintenance-mode {
-      text-align: center;
-      font-size: 24px;
-      background-color: #f1c40f;
-      color: #fff;
-      padding: 10px;
-      margin-bottom: 20px;
-      border-radius: 5px;
-    }
-    .hidden {
-      display: none;
-    }
-    #admin-login {
-      margin: 20px auto;
-      text-align: center;
-    }
-    #admin-login input {
-      padding: 10px;
-      margin: 5px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    #admin-login button {
-      padding: 10px;
-      background-color: #39ff14;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
+    .video-card {
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    .video-card:hover {
+      transform: translateY(-5px);
+    }
+    .video-card img {
+      width: 100%;
+      height: auto;
+    }
+    .video-info {
+      padding: 10px;
+    }
+    .video-info h3 {
+      font-size: 1rem;
+      margin: 0 0 5px;
+    }
+    .video-info p {
+      color: #666;
+      font-size: 0.9rem;
+      margin: 0;
     }
   </style>
 </head>
 <body>
 
-  <div id="maintenance-mode" class="maintenance-mode">The site is under maintenance. Admins can unlock access with a password.</div>
-
-  <!-- Admin login form -->
-  <div id="admin-login" class="hidden">
-    <h3>Admin Login</h3>
-    <input type="password" id="admin-password" placeholder="Enter Admin Password">
-    <button id="admin-access-btn">Unlock Site</button>
+<header>
+  <h1>YouTube Clone</h1>
+  <div>
+    <input type="text" id="search-bar" placeholder="Search videos...">
+    <button onclick="searchVideos()">Search</button>
   </div>
+</header>
 
-  <!-- Search bar for projects -->
-  <input type="text" id="search-bar" class="hidden" placeholder="Search projects...">
+<div class="container" id="video-container">
+  <!-- Video Cards will be inserted here dynamically -->
+</div>
 
-  <div id="projects-container" class="hidden"></div>
-  <div id="pagination" class="hidden"></div>
+<script>
+  // Sample video data (in a real app, you fetch this from a backend or API)
+  const videos = [
+    {
+      title: "How to code in HTML",
+      channel: "CodeWithMe",
+      thumbnail: "https://via.placeholder.com/300x200",
+      videoUrl: "https://www.youtube.com/embed/1La4QzGeaaQ"
+    },
+    {
+      title: "CSS Basics Tutorial",
+      channel: "WebDev101",
+      thumbnail: "https://via.placeholder.com/300x200",
+      videoUrl: "https://www.youtube.com/embed/yfoY53QXEnI"
+    },
+    {
+      title: "JavaScript for Beginners",
+      channel: "LearnJS",
+      thumbnail: "https://via.placeholder.com/300x200",
+      videoUrl: "https://www.youtube.com/embed/W6NZfCO5SIk"
+    },
+    {
+      title: "React Crash Course",
+      channel: "ReactPro",
+      thumbnail: "https://via.placeholder.com/300x200",
+      videoUrl: "https://www.youtube.com/embed/bMknfKXIFA8"
+    },
+  ];
 
-  <!-- Dark/Light mode toggle button -->
-  <button id="theme-toggle" class="hidden">Switch to Dark Mode</button>
+  // Function to display videos
+  function displayVideos(videosToDisplay) {
+    const container = document.getElementById("video-container");
+    container.innerHTML = ""; // Clear existing videos
 
-  <!-- Maintenance mode toggle button -->
-  <button id="maintenance-toggle">Turn Maintenance Mode Off</button>
-
-  <script>
-    let maintenanceMode = true; // Toggle maintenance mode
-    const adminPassword = 'securepassword'; // Set your admin password
-
-    // Toggle maintenance mode visibility
-    function toggleMaintenanceMode() {
-      const maintenanceElement = document.getElementById('maintenance-mode');
-      const searchBar = document.getElementById('search-bar');
-      const projectsContainer = document.getElementById('projects-container');
-      const pagination = document.getElementById('pagination');
-      const themeToggle = document.getElementById('theme-toggle');
-      const adminLogin = document.getElementById('admin-login');
-
-      if (maintenanceMode) {
-        maintenanceElement.style.display = 'block';
-        searchBar.classList.add('hidden');
-        projectsContainer.classList.add('hidden');
-        pagination.classList.add('hidden');
-        themeToggle.classList.add('hidden');
-        adminLogin.classList.remove('hidden');
-      } else {
-        maintenanceElement.style.display = 'none';
-        searchBar.classList.remove('hidden');
-        projectsContainer.classList.remove('hidden');
-        pagination.classList.remove('hidden');
-        themeToggle.classList.remove('hidden');
-        adminLogin.classList.add('hidden');
-      }
-    }
-
-    // Admin access functionality
-    document.getElementById('admin-access-btn').addEventListener('click', function() {
-      const passwordInput = document.getElementById('admin-password').value;
-      if (passwordInput === adminPassword) {
-        alert('Access granted!');
-        maintenanceMode = false;
-        toggleMaintenanceMode();
-        renderProjects(1); // Render projects after maintenance mode ends
-      } else {
-        alert('Incorrect password!');
-      }
+    videosToDisplay.forEach(video => {
+      const videoCard = document.createElement("div");
+      videoCard.className = "video-card";
+      videoCard.innerHTML = `
+        <img src="${video.thumbnail}" alt="${video.title}">
+        <div class="video-info">
+          <h3>${video.title}</h3>
+          <p>${video.channel}</p>
+        </div>
+      `;
+      videoCard.onclick = () => openVideo(video.videoUrl);
+      container.appendChild(videoCard);
     });
+  }
 
-    // Render projects (placeholder)
-    function renderProjects(page) {
-      const projectsContainer = document.getElementById('projects-container');
-      projectsContainer.innerHTML = '<p>Projects loaded!</p>';
-    }
+  // Function to open video in a new tab
+  function openVideo(url) {
+    window.open(url, "_blank");
+  }
 
-    // Maintenance mode toggle
-    document.getElementById('maintenance-toggle').addEventListener('click', function() {
-      maintenanceMode = !maintenanceMode;
-      toggleMaintenanceMode();
-    });
+  // Function to search videos
+  function searchVideos() {
+    const searchTerm = document.getElementById("search-bar").value.toLowerCase();
+    const filteredVideos = videos.filter(video =>
+      video.title.toLowerCase().includes(searchTerm) ||
+      video.channel.toLowerCase().includes(searchTerm)
+    );
+    displayVideos(filteredVideos);
+  }
 
-    // Initial load
-    toggleMaintenanceMode();
-  </script>
+  // Display all videos initially
+  displayVideos(videos);
+</script>
+
 </body>
 </html>
