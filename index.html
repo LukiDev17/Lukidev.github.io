@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meine APK-Downloads</title>
+    <title>Wartungsmodus - Meine APK-Downloads</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -19,6 +19,7 @@
         }
         main {
             padding: 20px;
+            text-align: center;
         }
         .apk-link {
             display: block;
@@ -41,19 +42,28 @@
             width: 100%;
             bottom: 0;
         }
+        .maintenance {
+            background-color: #f44336;
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+            font-size: 1.2em;
+        }
     </style>
 </head>
 <body>
 
 <header>
     <h1>Willkommen auf meiner APK-Download-Seite</h1>
-    <p>Lade die neueste Version meiner App herunter</p>
+    <p>Der Service ist derzeit in Wartung</p>
 </header>
 
 <main>
-    <h2>APK-Downloads</h2>
-    <a href="link-zu-deiner-apk.apk" class="apk-link" download>APK Version 1.0.0 herunterladen</a>
-    <p>Stelle sicher, dass du die APK nur von vertrauenswürdigen Quellen herunterlädst. Weitere Details findest du in der Dokumentation.</p>
+    <div class="maintenance">
+        <h2>Wartungsmodus aktiv</h2>
+        <p>Unsere Webseite wird gerade gewartet und ist vorübergehend nicht verfügbar. Bitte versuchen Sie es später noch einmal.</p>
+    </div>
+    <p>Danke für dein Verständnis!</p>
 </main>
 
 <footer>
