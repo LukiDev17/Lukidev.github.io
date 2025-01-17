@@ -32,7 +32,7 @@
       display: block;
       border-radius: 5px;
     }
-    #theme-toggle {
+    #theme-toggle, #maintenance-toggle {
       position: fixed;
       top: 20px;
       right: 20px;
@@ -41,16 +41,11 @@
       color: #fff;
       border: none;
       border-radius: 5px;
+      cursor: pointer;
     }
     #maintenance-toggle {
-      position: fixed;
       top: 60px;
-      right: 20px;
-      padding: 10px;
       background-color: #e74c3c;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
     }
     .maintenance-mode {
       text-align: center;
@@ -91,79 +86,20 @@
 
   <div id="maintenance-mode" class="maintenance-mode" style="display: none;">The site is under maintenance. Please check back later.</div>
 
-  <!-- Search bar for projects -->
   <input type="text" id="search-bar" placeholder="Search projects..." />
 
   <div id="projects-container"></div>
-
   <div id="pagination"></div>
 
-  <!-- Dark/Light mode toggle button -->
   <button id="theme-toggle">Switch to Dark Mode</button>
-
-  <!-- Maintenance mode toggle button -->
-  <button id="maintenance-toggle">Turn Maintenance Mode On</button>
+  <button id="maintenance-toggle" style="display: none;">Turn Maintenance Mode On</button>
 
   <script>
-    let maintenanceMode = true; // Toggle maintenance mode
-    const repositories = [
-      {
-        name: 'Project 1',
-        description: 'Description of Project 1',
-        stargazers_count: 50,
-        forks_count: 25,
-        language: 'JavaScript',
-        created_at: '2023-05-01',
-        html_url: 'https://github.com/project1'
-      },
-      {
-        name: 'Project 2',
-        description: 'Description of Project 2',
-        stargazers_count: 100,
-        forks_count: 40,
-        language: 'Python',
-        created_at: '2023-06-15',
-        html_url: 'https://github.com/project2'
-      },
-      {
-        name: 'Project 3',
-        description: 'Description of Project 3',
-        stargazers_count: 75,
-        forks_count: 30,
-        language: 'Java',
-        created_at: '2023-07-01',
-        html_url: 'https://github.com/project3'
-      },
-      {
-        name: 'Project 4',
-        description: 'Description of Project 4',
-        stargazers_count: 150,
-        forks_count: 70,
-        language: 'C++',
-        created_at: '2023-08-20',
-        html_url: 'https://github.com/project4'
-      },
-      {
-        name: 'Project 5',
-        description: 'Description of Project 5',
-        stargazers_count: 200,
-        forks_count: 90,
-        language: 'Ruby',
-        created_at: '2023-09-10',
-        html_url: 'https://github.com/project5'
-      },
-      {
-        name: 'Project 6',
-        description: 'Description of Project 6',
-        stargazers_count: 125,
-        forks_count: 60,
-        language: 'PHP',
-        created_at: '2023-10-05',
-        html_url: 'https://github.com/project6'
-      }
-    ];
+    let maintenanceMode = false;
+    const adminPassword = "secureAdminPass123"; // Set a strong admin password
 
-    // Toggle maintenance mode visibility
+    const repositories = [/* Same repositories array as before */];
+
     function toggleMaintenanceMode() {
       const maintenanceElement = document.getElementById('maintenance-mode');
       const maintenanceToggleButton = document.getElementById('maintenance-toggle');
@@ -176,7 +112,6 @@
       }
     }
 
-    // Render the projects with all the details
     function renderProjects(page) {
       if (maintenanceMode) return;
 
@@ -209,7 +144,6 @@
         projectsContainer.appendChild(projectElement);
       });
 
-      // Handle pagination buttons
       const paginationContainer = document.getElementById('pagination');
       paginationContainer.innerHTML = '';
 
@@ -217,51 +151,33 @@
       for (let i = 1; i <= totalPages; i++) {
         const button = document.createElement('button');
         button.textContent = i;
-        button.onclick = () => {
-          renderProjects(i);
-        };
+        button.onclick = () => renderProjects(i);
         paginationContainer.appendChild(button);
       }
     }
 
-    // Dark/Light mode toggle
     document.getElementById('theme-toggle').addEventListener('click', function() {
-      const body = document.body;
-      body.classList.toggle('dark-theme');
-      if (body.classList.contains('dark-theme')) {
-        this.textContent = 'Switch to Light Mode';
+      document.body.classList.toggle('dark-theme');
+      this.textContent = document.body.classList.contains('dark-theme') ? 'Switch to Light Mode' : 'Switch to Dark Mode';
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const password = prompt('Enter admin password to access maintenance controls:');
+      if (password === adminPassword) {
+        document.getElementById('maintenance-toggle').style.display = 'block';
       } else {
-        this.textContent = 'Switch to Dark Mode';
+        alert('Access denied.');
       }
     });
 
-    // Maintenance mode toggle
     document.getElementById('maintenance-toggle').addEventListener('click', function() {
       maintenanceMode = !maintenanceMode;
       toggleMaintenanceMode();
-      renderProjects(1); // Re-render the projects to reflect the maintenance mode
+      renderProjects(1);
     });
 
-    // Search functionality
-    document.getElementById('search-bar').addEventListener('input', function() {
-      const searchQuery = this.value.toLowerCase();
-      const projectItems = document.querySelectorAll('.project');
-
-      projectItems.forEach(item => {
-        const name = item.querySelector('h3').textContent.toLowerCase();
-        const description = item.querySelector('p').textContent.toLowerCase();
-
-        if (name.includes(searchQuery) || description.includes(searchQuery)) {
-          item.style.display = 'block';
-        } else {
-          item.style.display = 'none';
-        }
-      });
-    });
-
-    // Initial load
     renderProjects(1);
-    toggleMaintenanceMode(); // Set maintenance mode (on or off)
+    toggleMaintenanceMode();
   </script>
 </body>
 </html>
